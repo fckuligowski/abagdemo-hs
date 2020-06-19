@@ -18,7 +18,8 @@ steps:
   - '/persistent_volume/tests:/abagdemo/tests'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'ls'
-  - '-al /abagdemo'
+  - '-al'
+  - '/abagdemo'
 
 
 substitutions:
