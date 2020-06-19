@@ -3,12 +3,14 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 # TEST
+- name: 'bash'
+  args: ['cp', 'tests', '/persistent_volume/tests']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
 - name: 'gcr.io/cloud-builders/docker'
   volumes:
   - name: 'vol1'
-    path: .
+    path: '/persistent_volume/tests'
   args: 
   - 'run'
   - '--name'
