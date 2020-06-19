@@ -4,7 +4,7 @@ steps:
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 # TEST
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '--name', '${_APP_NAME}', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
+  args: ['run', '--name', '${_APP_NAME}', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env && ls -al']
 
 substitutions:
     # Docker Repo
