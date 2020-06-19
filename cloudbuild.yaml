@@ -38,6 +38,7 @@ steps:
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'ls'
   - '-alr'
+  - '/abagdemo/tests'
 
 - id: 'Print Work Dir'
   name: 'gcr.io/cloud-builders/docker'
