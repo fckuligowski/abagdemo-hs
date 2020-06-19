@@ -1,10 +1,11 @@
 steps:
 # Build the application container
-- name: 'gcr.io/cloud-builders/docker'
+- id: 'Build the application container'
+  name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 # TEST
 - name: 'bash'
-  args: ['ls', '-al']
+  args: ['ls', '-al', 'tests']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
 - name: 'gcr.io/cloud-builders/docker'
