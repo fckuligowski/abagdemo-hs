@@ -21,9 +21,21 @@ steps:
   - '/abagdemo/tests'
   - '-type'
   - 'f'
+  - '-print'
+- name: 'gcr.io/cloud-builders/docker'
+  args: 
+  - 'run'
+  - '--name'
+  - '${_APP_NAME}'
+  - '--rm'
+  - '-v'
+  - '/persistent_volume/tests:/abagdemo/tests'
+  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
+  - 'ls'
+  - '-alr'
+  - '/abagdemo/tests'
 
-
-substitutions:
+  substitutions:
     # Docker Repo
     _DOCKER_REPO: fckuligowski
     _APP_NAME: abagdemo
