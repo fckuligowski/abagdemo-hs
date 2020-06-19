@@ -30,7 +30,20 @@ steps:
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'ls'
   - '-alr'
-  - ';'
+
+- id: 'Print Work Dir'
+  name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'vol1'
+    path: '/persistent_volume'
+  args: 
+  - 'run'
+  - '--name'
+  - '${_APP_NAME}'
+  - '--rm'
+  - '-v'
+  - 'vol1:/abagdemo'
+  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'pwd'
 
 - id: 'Run Unit Tests'
