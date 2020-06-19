@@ -8,7 +8,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   volumes:
   - name: 'vol1'
-    path: /workspace
+    path: /persistent_volume
   args: 
   - 'run'
   - '--name'
