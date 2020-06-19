@@ -21,6 +21,7 @@ steps:
   - 'tests'
   - '-type'
   - 'f'
+  - '-print'
 
 
 substitutions:
