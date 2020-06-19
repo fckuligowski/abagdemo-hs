@@ -35,7 +35,7 @@ steps:
   - '-alr'
   - '/abagdemo/tests'
 
-  substitutions:
+substitutions:
     # Docker Repo
     _DOCKER_REPO: fckuligowski
     _APP_NAME: abagdemo
