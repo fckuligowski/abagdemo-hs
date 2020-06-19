@@ -6,7 +6,20 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'ls', '-al']
+  volumes:
+  - name: 'vol1'
+    path: /workspace
+  args: 
+  - 'run'
+  - '--name'
+  - '${_APP_NAME}'
+  - '--rm'
+  - '-v'
+  - 'vol1:/abagdemo'
+  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
+  - 'ls'
+  - '-al /abagdemo'
+
 
 substitutions:
     # Docker Repo
