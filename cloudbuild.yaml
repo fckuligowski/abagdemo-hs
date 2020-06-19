@@ -48,8 +48,7 @@ steps:
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - '/bin/sh'
   - '-c'
-  - '/abagdemo/tests/testit.sh'
-  - 'unit'
+  - '/abagdemo/tests/testit.sh unit'
 
 substitutions:
     # Docker Repo
