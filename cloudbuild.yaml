@@ -4,14 +4,17 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 # TEST
-- name: 'bash'
+- id: 'Copy tests scripts'
+  name: 'bash'
   volumes:
   - name: 'vol1'
     path: '/persistent_volume'
   args: ['cp', '-R', 'tests', '/persistent_volume']
-- name: 'gcr.io/cloud-builders/docker'
+- id: 'Show Env Vars'
+  name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
-- name: 'gcr.io/cloud-builders/docker'
+- id: 'List Test Scripts'
+  name: 'gcr.io/cloud-builders/docker'
   volumes:
   - name: 'vol1'
     path: '/persistent_volume'
@@ -28,7 +31,8 @@ steps:
   - '-type'
   - 'f'
   - '-print'
-- name: 'gcr.io/cloud-builders/docker'
+- id: 'Run Unit Tests'
+  name: 'gcr.io/cloud-builders/docker'
   volumes:
   - name: 'vol1'
     path: '/persistent_volume'
@@ -42,7 +46,7 @@ steps:
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'ls'
   - '-alr'
-  - '/abagdemo/tests'
+  - '/abagdemo'
 
 substitutions:
     # Docker Repo
