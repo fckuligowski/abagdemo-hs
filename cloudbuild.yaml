@@ -15,6 +15,14 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
 
+- id: 'List without volume'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'ls', '-alr']
+
+- id: 'PWD without volume'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'pwd']
+
 - id: 'List Test Scripts'
   name: 'gcr.io/cloud-builders/docker'
   volumes:
