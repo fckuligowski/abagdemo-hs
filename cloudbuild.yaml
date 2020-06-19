@@ -18,10 +18,9 @@ steps:
   - '/persistent_volume/tests:/abagdemo/tests'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'find'
-  - 'tests'
+  - '/abagdemo/tests'
   - '-type'
   - 'f'
-  - '-print'
 
 
 substitutions:
