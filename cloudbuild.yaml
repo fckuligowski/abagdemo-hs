@@ -5,17 +5,23 @@ steps:
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 # TEST
 - name: 'bash'
+  volumes:
+  - name: 'vol1'
+    path: '/persistent_volume'
   args: ['cp', '-R', 'tests', '/persistent_volume']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
 - name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'vol1'
+    path: '/persistent_volume'
   args: 
   - 'run'
   - '--name'
   - '${_APP_NAME}'
   - '--rm'
   - '-v'
-  - '/persistent_volume/tests:/abagdemo/tests'
+  - 'vol1:/abagdemo/tests'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'find'
   - '/abagdemo/tests'
@@ -23,13 +29,16 @@ steps:
   - 'f'
   - '-print'
 - name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'vol1'
+    path: '/persistent_volume'
   args: 
   - 'run'
   - '--name'
   - '${_APP_NAME}'
   - '--rm'
   - '-v'
-  - '/persistent_volume/tests:/abagdemo/tests'
+  - 'vol1:/abagdemo/tests'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'ls'
   - '-alr'
