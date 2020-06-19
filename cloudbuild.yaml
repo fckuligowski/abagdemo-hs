@@ -27,7 +27,7 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   volumes:
   - name: 'vol1'
-    path: '/persistent_volume/tests'
+    path: '/persistent_volume'
   args: 
   - 'run'
   - '--name'
