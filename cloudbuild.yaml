@@ -10,9 +10,11 @@ steps:
   - name: 'vol1'
     path: '/persistent_volume'
   args: ['cp', '-R', 'tests', '/persistent_volume']
+
 - id: 'Show Env Vars'
   name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
+
 - id: 'List Test Scripts'
   name: 'gcr.io/cloud-builders/docker'
   volumes:
@@ -26,11 +28,11 @@ steps:
   - '-v'
   - 'vol1:/abagdemo'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - 'find'
-  - '/abagdemo/tests'
-  - '-type'
-  - 'f'
-  - '-print'
+  - 'ls'
+  - '-alr'
+  - ';'
+  - 'pwd'
+
 - id: 'Run Unit Tests'
   name: 'gcr.io/cloud-builders/docker'
   volumes:
