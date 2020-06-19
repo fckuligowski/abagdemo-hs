@@ -44,9 +44,8 @@ steps:
   - '-v'
   - 'vol1:/abagdemo'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - 'ls'
-  - '-alr'
-  - '/abagdemo'
+  - 'tests/runit.sh'
+  - 'unit'
 
 substitutions:
     # Docker Repo
