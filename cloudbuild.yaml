@@ -1,0 +1,14 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
+
+substitutions:
+    # Docker Repo
+    _DOCKER_REPO: fckuligowski
+    _APP_NAME: abagdemo
+    
+    # Developers ONLY change
+    _VERSION: v1.x
+    
+options:
+    substitution_option: 'ALLOW_LOOSE'
