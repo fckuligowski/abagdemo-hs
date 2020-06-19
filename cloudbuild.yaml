@@ -5,7 +5,7 @@ steps:
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 # TEST
 - name: 'bash'
-  args: ['cp', '-R', 'tests', '/persistent_volume/tests']
+  args: ['cp', '-R', 'tests', '/persistent_volume']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
 - name: 'gcr.io/cloud-builders/docker'
