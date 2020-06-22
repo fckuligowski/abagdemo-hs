@@ -15,11 +15,13 @@ steps:
   - '/persistent_volume/creds/service-account.json'
 
 - id: 'Get/Save Key ID'
-  name: 'bash'
+  name: 'curl'
   volumes:
   - name: 'credsvol'
     path: '/persistent_volume/creds'
+  entrypoint: 'sh'
   args:
+  - '-c'
   - 'jq '
   - '".private_key_id"'
   - ' /persistent_volume/creds/service-account.json'
