@@ -11,10 +11,10 @@ steps:
 # Build the application container
 - id: 'Build the application container'
   name: 'gcr.io/cloud-builders/docker'
-  entrypoint: sh
   volumes:
   - name: 'vervol'
     path: '/persistent_volume/ver'
+  entrypoint: sh
   args: 
   - '-c'
   - 'docker build -t $(cat /persistent_volume/ver/image_name.txt) .'
@@ -26,20 +26,20 @@ steps:
     path: '/persistent_volume/tests'
   args: ['cp', '-R', 'tests', '/persistent_volume']
 
-- id: 'Create Cred Key'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  args: 
-  - 'gcloud'
-  - 'iam'
-  - 'service-accounts'
-  - 'keys'
-  - 'create'
-  - '--iam-account'
-  - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
-  - '/persistent_volume/creds/service-account.json'
+#- id: 'Create Cred Key'
+#  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+# volumes:
+#  - name: 'credsvol'
+#    path: '/persistent_volume/creds'
+#  args: 
+#  - 'gcloud'
+#  - 'iam'
+#  - 'service-accounts'
+#  - 'keys'
+#  - 'create'
+#  - '--iam-account'
+#  - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
+#  - '/persistent_volume/creds/service-account.json'
 
 - id: 'Run Unit Tests'
   name: 'gcr.io/cloud-builders/docker'
@@ -121,6 +121,7 @@ steps:
 substitutions:
     # Google Storage Creds
     _GOOGLE_APPLICATION_CREDENTIALS: '/abagdemo/creds/service-account.json'
-    
+    _APP_NAME: 'abagdemo-gcp'
+
 options:
     substitution_option: 'ALLOW_LOOSE'
