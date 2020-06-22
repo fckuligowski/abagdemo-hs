@@ -4,45 +4,10 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 
-#- id: 'Copy tests scripts'
-#  name: 'bash'
-#  volumes:
-#  - name: 'testsvol'
-#    path: '/persistent_volume/tests'
-#  args: ['cp', '-R', 'tests', '/persistent_volume']
 - id: 'Copy test scripts'
   name: 'bash'
   args: ['cp', '-R', 'tests', '/workspace/abagdemo']
 
-- id: 'Create Cred Key'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  args: ['gcloud', 'iam', 'service-accounts', 'keys', 'create', '--iam-account', 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com', '/persistent_volume/creds/service-account.json']
-
-
-- id: 'Show Env Vars'
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '--name', '${_APP_NAME}', '--rm', '-e', 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
-
-#- id: 'List Test Scripts'
-#  name: 'gcr.io/cloud-builders/docker'
-#  volumes:
-#  - name: 'testsvol'
-#    path: '/persistent_volume/tests'
-#  args: 
-#  - 'run'
-#  - '--name'
-#  - '${_APP_NAME}'
-#  - '--rm'
-#  - '-v'
-#  - 'testsvol:/abagdemo/tests'
-#  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-#  - 'find'
-#  - '/abagdemo'
-#  - '-type'
-#  - 'f'
 - id: 'List Test Scripts'
   name: 'gcr.io/cloud-builders/docker'
   args: 
@@ -50,56 +15,13 @@ steps:
   - '--name'
   - '${_APP_NAME}'
   - '--rm'
-  - '-v'
-  - 'testsvol:/abagdemo/tests'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'find'
   - '/abagdemo'
   - '-type'
   - 'f'
 
-- id: 'List Creds File'
-  name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  args: 
-  - 'run'
-  - '--name'
-  - '${_APP_NAME}'
-  - '--rm'
-  - '-v'
-  - 'credsvol:/abagdemo/creds'
-  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - 'find'
-  - '/abagdemo'
-  - '-type'
-  - 'f'
-
-- id: 'Run Unit Tests'
-  name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  args: 
-  - 'run'
-  - '--name'
-  - '${_APP_NAME}'
-  - '--rm'
-  - '-v'
-  - 'testsvol:/abagdemo/tests'
-  - '-v'
-  - 'credsvol:/abagdemo/creds'
-  - '-e'
-  - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
-  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - '/bin/sh'
-  - '-c'
-  - '/abagdemo/tests/testit.sh unit'
-
-substitutions:
+  substitutions:
     # Docker Repo
     _DOCKER_REPO: fckuligowski
     _APP_NAME: abagdemo
