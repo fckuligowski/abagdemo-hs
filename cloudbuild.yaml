@@ -11,7 +11,7 @@ steps:
     path: '/persistent_volume/tests'
   args: ['cp', '-R', 'tests', '/persistent_volume']
 
-- id: 'Create Cred Key'
+- id: 'Create Cred Key File'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   volumes:
   - name: 'credsvol'
