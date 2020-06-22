@@ -92,6 +92,14 @@ steps:
   - '-c'
   - 'gcloud iam service-accounts keys delete $(cat /persistent_volume/creds/key.txt) --iam-account "last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com" -q'
 
+#Push the image  
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: sh
+  args: 
+  - '-c'
+  - 'if test "$BRANCH_NAME" = "master"; then echo gcr.io/${_PROJECT}/${_CONTAINERNAME}:${_VERSION}; fi'
+#  args: ['push','gcr.io/${_PROJECT}/${_CONTAINERNAME}:${_VERSION}']
+
 substitutions:
     # Docker Repo
     _DOCKER_REPO: fckuligowski
