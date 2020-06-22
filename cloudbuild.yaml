@@ -16,7 +16,7 @@ steps:
   volumes:
   - name: 'credsvol'
     path: '/persistent_volume/creds'
-  args: ['gcloud', 'iam', 'service-accounts', 'keys', 'create', '--iam-account', '"last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com"', '/persistent_volume/creds/service-account.json']
+  args: ['gcloud', 'iam', 'service-accounts', 'keys', 'create', '--iam-account', 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com', '/persistent_volume/creds/service-account.json']
 
 
 - id: 'Show Env Vars'
