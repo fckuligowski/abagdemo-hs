@@ -15,7 +15,7 @@ steps:
   - '/persistent_volume/creds/service-account.json'
 
 - id: 'Get/Save Key ID'
-  name: 'gcr.io/cloud-builders/curl'
+  name: 'stedolan/jq'
   volumes:
   - name: 'credsvol'
     path: '/persistent_volume/creds'
@@ -23,9 +23,10 @@ steps:
   args:
   - '-c'
   - 'jq '
-  - '".private_key_id"'
-  - ' /persistent_volume/creds/service-account.json'
-  - '-r'
+  - '--help'
+#  - '".private_key_id"'
+#  - ' /persistent_volume/creds/service-account.json'
+#  - '-r'
 #   > /persistent_volume/creds/key.txt'
 
 - id: 'Delete Cred Key'
