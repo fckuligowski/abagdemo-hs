@@ -19,7 +19,9 @@ steps:
   volumes:
   - name: 'credsvol'
     path: '/persistent_volume/creds'
+  entrypoint: sh
   args: 
+  - '-c'
   - 'gcloud'
   - 'iam'
   - 'service-accounts'
