@@ -20,8 +20,11 @@ steps:
   - name: 'credsvol'
     path: '/persistent_volume/creds'
   args:
-  - '-c'
-  - 'jq ".private_key_id" /persistent_volume/creds/service-account.json -r > /persistent_volume/creds/key.txt'
+  - 'jq '
+  - '".private_key_id"'
+  - ' /persistent_volume/creds/service-account.json'
+  - '-r'
+#   > /persistent_volume/creds/key.txt'
 
 - id: 'Delete Cred Key'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
