@@ -14,6 +14,16 @@ steps:
   - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
   - '/persistent_volume/creds/service-account.json'
 
+- id: 'Get Key Id'
+  name: 'ubuntu'
+  volumes:
+  - name: 'credsvol'
+    path: '/persistent_volume/creds'
+  entrypoint: sh
+  args:
+  - '-c'
+  - 'jq ".private_key_id" /persistent_volume/creds/service-account.json -r > /persistent_volume/creds/key.txt'
+
 - id: 'Delete Cred Key'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   volumes:
@@ -21,8 +31,8 @@ steps:
     path: '/persistent_volume/creds'
   entrypoint: sh
   args: 
-  - "-c"
-  - "gcloud iam service-accounts keys delete $(jq '.private_key_id' /persistent_volume/creds/service-account.json -r)--iam-account 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com' -q"
+  - '-c'
+  - 'gcloud iam service-accounts keys delete $(cat /persistent_volume/creds/key.txt) --iam-account "last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com" -q'
 
 substitutions:
     # Docker Repo
