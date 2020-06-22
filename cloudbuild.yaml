@@ -7,7 +7,7 @@ steps:
   entrypoint: 'sh'
   args:
   - '-c'
-  - 'grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > /persistent_volume/ver/image_name.txt'
+  - 'egrep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > /persistent_volume/ver/image_name.txt'
 
 # Build the application container
 - id: 'Build the application container'
