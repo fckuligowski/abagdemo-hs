@@ -1,15 +1,15 @@
 steps:
 # Build the application container
-#- id: 'Build the application container'
-#  name: 'gcr.io/cloud-builders/docker'
-#  args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
-#
-#- id: 'Copy tests scripts'
-#  name: 'bash'
-#  volumes:
-#  - name: 'testsvol'
-#    path: '/persistent_volume/tests'
-#  args: ['cp', '-R', 'tests', '/persistent_volume']
+- id: 'Build the application container'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
+
+- id: 'Copy tests scripts'
+  name: 'bash'
+  volumes:
+  - name: 'testsvol'
+    path: '/persistent_volume/tests'
+  args: ['cp', '-R', 'tests', '/persistent_volume']
 
 - id: 'Create Cred Key'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
