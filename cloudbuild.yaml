@@ -22,6 +22,8 @@ steps:
 - id: 'Show Env Vars'
   name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
+  env:
+  - 'GOOGLE_APPLICATION_CREDENTIALS=/abagdemo/creds/service-account.json'
 
 - id: 'List Test Scripts'
   name: 'gcr.io/cloud-builders/docker'
@@ -35,6 +37,24 @@ steps:
   - '--rm'
   - '-v'
   - 'testsvol:/abagdemo/tests'
+  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
+  - 'find'
+  - '/abagdemo'
+  - '-type'
+  - 'f'
+
+- id: 'List Creds File'
+  name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'credsvol'
+    path: '/persistent_volume/creds'
+  args: 
+  - 'run'
+  - '--name'
+  - '${_APP_NAME}'
+  - '--rm'
+  - '-v'
+  - 'credsvol:/abagdemo/tests'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'find'
   - '/abagdemo'
