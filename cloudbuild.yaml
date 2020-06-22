@@ -1,6 +1,6 @@
 steps:
 - id: 'Get Version'
-  name: 'bash'
+  name: 'ubuntu'
   volumes:
   - name: 'vervol'
     path: '/persistent_volume/ver'
