@@ -14,7 +14,7 @@ steps:
   - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
   - '/persistent_volume/creds/service-account.json'
 
-- id: 'Get Key Id'
+- id: 'Get/Save Key ID'
   name: 'ubuntu'
   volumes:
   - name: 'credsvol'
