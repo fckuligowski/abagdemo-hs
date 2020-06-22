@@ -18,7 +18,8 @@ steps:
     path: '/persistent_volume/ver'
   args: 
   - '-c'
-  - 'docker build -t $(cat /persistent_volume/ver/image_name.txt) .'
+  - 'echo $(cat /persistent_volume/ver/image_name.txt)'
+#  - 'docker build -t $(cat /persistent_volume/ver/image_name.txt) .'
 
 substitutions:
     # Docker Repo
