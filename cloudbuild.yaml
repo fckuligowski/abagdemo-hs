@@ -15,7 +15,7 @@ steps:
   - '/persistent_volume/creds/service-account.json'
 
 - id: 'Get/Save Key ID'
-  name: 'ubuntu'
+  name: 'bash'
   volumes:
   - name: 'credsvol'
     path: '/persistent_volume/creds'
