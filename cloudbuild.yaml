@@ -1,4 +1,16 @@
 steps:
+# Build the application container
+- id: 'Build the application container'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
+
+- id: 'Copy tests scripts'
+  name: 'bash'
+  volumes:
+  - name: 'testsvol'
+    path: '/persistent_volume/tests'
+  args: ['cp', '-R', 'tests', '/persistent_volume']
+
 - id: 'Create Cred Key'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   volumes:
@@ -13,6 +25,29 @@ steps:
   - '--iam-account'
   - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
   - '/persistent_volume/creds/service-account.json'
+
+- id: 'Run Unit Tests'
+  name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'testsvol'
+    path: '/persistent_volume/tests'
+  - name: 'credsvol'
+    path: '/persistent_volume/creds'
+  args: 
+  - 'run'
+  - '--name'
+  - '${_APP_NAME}'
+  - '--rm'
+  - '-v'
+  - 'testsvol:/abagdemo/tests'
+  - '-v'
+  - 'credsvol:/abagdemo/creds'
+  - '-e'
+  - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
+  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
+  - '/bin/sh'
+  - '-c'
+  - '/abagdemo/tests/testit.sh unit'
 
 - id: 'Get/Save Key ID'
   name: 'stedolan/jq'
