@@ -97,7 +97,7 @@ steps:
   entrypoint: sh
   args: 
   - '-c'
-  - 'if test "$BRANCH_NAME" = "master"; then echo gcr.io/${_PROJECT}/${_CONTAINERNAME}:${_VERSION}; fi'
+  - 'if test "$BRANCH_NAME" = "master"; then docker push "gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}"; fi'
 #  args: ['push','gcr.io/${_PROJECT}/${_CONTAINERNAME}:${_VERSION}']
 
 substitutions:
