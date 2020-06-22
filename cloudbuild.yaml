@@ -15,7 +15,7 @@ steps:
   - '/persistent_volume/creds/service-account.json'
 
 - id: 'Get/Save Key ID'
-  name: 'curl'
+  name: 'gcr.io/cloud-builders/curl'
   volumes:
   - name: 'credsvol'
     path: '/persistent_volume/creds'
