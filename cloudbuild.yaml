@@ -25,7 +25,7 @@ steps:
   - 'service-accounts'
   - 'keys'
   - 'delete'
-  - $(jq '.private_key_id' /persistent_volume/creds/service-account.json -r)
+  - '$(jq ".private_key_id" /persistent_volume/creds/service-account.json -r)'
   - '--iam-account'
   - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
   - '-q'
