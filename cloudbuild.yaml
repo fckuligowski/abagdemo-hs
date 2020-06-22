@@ -23,10 +23,9 @@ steps:
   args:
   - '-c'
   - 'jq '
-  - '--help'
-#  - '".private_key_id"'
-#  - ' /persistent_volume/creds/service-account.json'
-#  - '-r'
+  - '".private_key_id"'
+  - ' /persistent_volume/creds/service-account.json'
+  - '-r'
 #   > /persistent_volume/creds/key.txt'
 
 - id: 'Delete Cred Key'
