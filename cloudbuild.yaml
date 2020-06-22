@@ -4,12 +4,15 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
 
-- id: 'Copy tests scripts'
+#- id: 'Copy tests scripts'
+#  name: 'bash'
+#  volumes:
+#  - name: 'testsvol'
+#    path: '/persistent_volume/tests'
+#  args: ['cp', '-R', 'tests', '/persistent_volume']
+- id: 'Copy test scripts'
   name: 'bash'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  args: ['cp', '-R', 'tests', '/persistent_volume']
+  args: ['cp', '-R', 'tests', '/workspace/abagdemo']
 
 - id: 'Create Cred Key'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -23,11 +26,25 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--name', '${_APP_NAME}', '--rm', '-e', 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
 
+#- id: 'List Test Scripts'
+#  name: 'gcr.io/cloud-builders/docker'
+#  volumes:
+#  - name: 'testsvol'
+#    path: '/persistent_volume/tests'
+#  args: 
+#  - 'run'
+#  - '--name'
+#  - '${_APP_NAME}'
+#  - '--rm'
+#  - '-v'
+#  - 'testsvol:/abagdemo/tests'
+#  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
+#  - 'find'
+#  - '/abagdemo'
+#  - '-type'
+#  - 'f'
 - id: 'List Test Scripts'
   name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
   args: 
   - 'run'
   - '--name'
