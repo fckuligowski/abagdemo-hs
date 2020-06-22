@@ -21,9 +21,7 @@ steps:
 
 - id: 'Show Env Vars'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '-e', 'GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS', 'env']
-  env:
-  - 'GOOGLE_APPLICATION_CREDENTIALS=/abagdemo/creds/service-account.json'
+  args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '-e', 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS', 'env']
 
 - id: 'List Test Scripts'
   name: 'gcr.io/cloud-builders/docker'
@@ -78,18 +76,18 @@ steps:
   - '-v'
   - 'credsvol:/abagdemo/creds'
   - '-e'
-  - 'GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS'
+  - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - '/bin/sh'
   - '-c'
   - '/abagdemo/tests/testit.sh unit'
-  env:
-  - 'GOOGLE_APPLICATION_CREDENTIALS=/abagdemo/creds/service-account.json'
 
 substitutions:
     # Docker Repo
     _DOCKER_REPO: fckuligowski
     _APP_NAME: abagdemo
+    # Google Storage Creds
+    _GOOGLE_APPLICATION_CREDENTIALS: '/abagdemo/creds/service-account.json'
     
     # Developers ONLY change
     _VERSION: v1.x
