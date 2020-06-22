@@ -21,7 +21,7 @@ steps:
 
 - id: 'Show Env Vars'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', 'env']
+  args: ['run', '--name', '${_APP_NAME}', '--rm', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '-e', 'GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS', 'env']
   env:
   - 'GOOGLE_APPLICATION_CREDENTIALS=/abagdemo/creds/service-account.json'
 
@@ -54,7 +54,7 @@ steps:
   - '${_APP_NAME}'
   - '--rm'
   - '-v'
-  - 'credsvol:/abagdemo/tests'
+  - 'credsvol:/abagdemo/creds'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - 'find'
   - '/abagdemo'
