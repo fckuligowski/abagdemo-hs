@@ -1,109 +1,29 @@
 steps:
-# Build the application container
-- id: 'Build the application container'
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
-
-- id: 'Copy tests scripts'
+- id: 'Get Version'
   name: 'bash'
   volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  args: ['cp', '-R', 'tests', '/persistent_volume']
-
-- id: 'Create Cred Key'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  args: 
-  - 'gcloud'
-  - 'iam'
-  - 'service-accounts'
-  - 'keys'
-  - 'create'
-  - '--iam-account'
-  - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
-  - '/persistent_volume/creds/service-account.json'
-
-- id: 'Run Unit Tests'
-  name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  args: 
-  - 'run'
-  - '--name'
-  - '${_APP_NAME}'
-  - '--rm'
-  - '-v'
-  - 'testsvol:/abagdemo/tests'
-  - '-v'
-  - 'credsvol:/abagdemo/creds'
-  - '-e'
-  - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
-  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - '/bin/sh'
-  - '-c'
-  - '/abagdemo/tests/testit.sh unit'
-
-- id: 'Run Functional Tests'
-  name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  args: 
-  - 'run'
-  - '--name'
-  - '${_APP_NAME}'
-  - '--rm'
-  - '-v'
-  - 'testsvol:/abagdemo/tests'
-  - '-v'
-  - 'credsvol:/abagdemo/creds'
-  - '-e'
-  - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
-  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - '/bin/sh'
-  - '-c'
-  - '/abagdemo/tests/testit.sh functional'
-
-- id: 'Get/Save Key ID'
-  name: 'stedolan/jq'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
   entrypoint: 'sh'
   args:
   - '-c'
-  - 'jq ".private_key_id" /persistent_volume/creds/service-account.json -r > /persistent_volume/creds/key.txt'
+  - 'grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > /persistent_volume/ver/image_name.txt'
 
-- id: 'Delete Cred Key'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+# Build the application container
+- id: 'Build the application container'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: sh
   volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  entrypoint: sh
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
   args: 
   - '-c'
-  - 'gcloud iam service-accounts keys delete $(cat /persistent_volume/creds/key.txt) --iam-account "last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com" -q'
-
-#Push the image  
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: sh
-  args: 
-  - '-c'
-  - 'if test "$BRANCH_NAME" = "master"; then docker push "gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}"; fi'
-#  args: ['push','gcr.io/${_PROJECT}/${_CONTAINERNAME}:${_VERSION}']
+  - 'docker build -t $(cat /persistent_volume/ver/image_name.txt) .'
 
 substitutions:
     # Docker Repo
-    _DOCKER_REPO: hazel-math-279814
-    _APP_NAME: abagdemo-gcp
+    _DOCKER_REPO: 'gcr.io/hazel-math-279814'
+    _APP_NAME: 'abagdemo-gcp'
     # Google Storage Creds
     _GOOGLE_APPLICATION_CREDENTIALS: '/abagdemo/creds/service-account.json'
     
