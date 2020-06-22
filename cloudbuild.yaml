@@ -77,6 +77,8 @@ steps:
   - 'testsvol:/abagdemo/tests'
   - '-v'
   - 'credsvol:/abagdemo/creds'
+  - '-e'
+  - 'GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS'
   - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
   - '/bin/sh'
   - '-c'
