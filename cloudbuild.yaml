@@ -22,10 +22,7 @@ steps:
   entrypoint: 'sh'
   args:
   - '-c'
-  - 'jq '
-  - '".private_key_id"'
-  - ' /persistent_volume/creds/service-account.json'
-  - '-r'
+  - 'jq ".private_key_id" /persistent_volume/creds/service-account.json -r'
 #   > /persistent_volume/creds/key.txt'
 
 - id: 'Delete Cred Key'
