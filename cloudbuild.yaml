@@ -13,3 +13,10 @@ steps:
   args: 
   - '-c'
   - 'docker build -t $(cat image_name.txt) .'
+
+- id: 'List Tests'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: bash
+  args: 
+  - '-c'
+  - 'find . type -f'
