@@ -51,6 +51,7 @@ steps:
     path: '/persistent_volume/creds'
   - name: 'vervol'
     path: '/persistent_volume/ver'
+  entrypoint: 'sh'
   args: 
   - '-c'
   - 'docker run --name ${_APP_NAME} --rm $(cat /persistent_volume/ver/image_name.txt) env'
