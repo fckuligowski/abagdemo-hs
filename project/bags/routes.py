@@ -21,8 +21,8 @@ def scan():
         rtn['scan'] = save_bag_scan(scan)
     return rtn
 
-@bags_blueprint.route('/XXXXstatus')
-@bags_blueprint.route('/status/<bag_id>')
+@bags_blueprint.route('/status')
+@bags_blueprint.route('/XXXXstatus/<bag_id>')
 def status(bag_id=None):
     """
         Return the last element for the specified bag
