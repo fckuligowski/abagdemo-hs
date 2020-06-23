@@ -92,6 +92,9 @@ steps:
 
 #Push the image  
 - name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
   entrypoint: sh
   args: 
   - '-c'
