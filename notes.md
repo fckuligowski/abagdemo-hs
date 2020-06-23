@@ -1,4 +1,8 @@
-
+**Introduction**
+This repo houses the abagdemo app and provides an example of how to build it using Google Cloud Builder.
+The cloudbuild.yaml script requires that the Google Storage credentials that abagdemo needs are stored using Secret Manager.
+The name of the secret is 'last-baron-abagdemo', or whatever you set GS_CREDS equal to at the bottom of cloudbuild.yaml.
+It must contain the Key .json file of the creds that can get to Google Storage.
 
 **Install**
 

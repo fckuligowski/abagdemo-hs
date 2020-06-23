@@ -4,7 +4,10 @@ steps:
   entrypoint: 'bash'
   args:
   - '-c'
-  - 'grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > image_name.txt'
+  - |
+    grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > image_name.txt &&
+    grep -oP "image:\s+\K(\S+)(?=:)" k8s/abagdemo-deploy.yaml > image_repo.txt &&
+    grep -oP "image:\s+\S+:\K(.*)" k8s/abagdemo-deploy.yaml > image_tag.txt
 
 # Build the application container
 - id: 'Build the application container'
@@ -44,12 +47,26 @@ steps:
   - '-c'
   - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
 
+- id: 'Search if Tag Exists'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - 'if test "$BRANCH_NAME" = "master"; then gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt; fi'
+
+- id: 'Show Found Tag'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - '[ -f image_found.txt ] && cat image_found.txt'
+
 #Push the image  
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: 
   - '-c'
-  - 'if test "$BRANCH_NAME" = "master"; then docker push $(cat image_name.txt); fi'
+  - 'if [ test -f image_found.txt && $(cat image_found.txt) -ne $(cat image_tag.txt); then docker push $(cat image_name.txt); fi'
 
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
