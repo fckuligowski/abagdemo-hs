@@ -19,4 +19,4 @@ steps:
   entrypoint: bash
   args: 
   - '-c'
-  - 'find . type -f'
+  - 'find . -type f'
