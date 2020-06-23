@@ -15,9 +15,18 @@ steps:
   - 'docker build -t $(cat image_name.txt) .'
 
 - id: 'Get Creds'
-  name: gcr.io/cloud-builders/gcloud
+  name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: 'bash'
-  args: [ '-c', 'gcloud secrets versions access latest --secret=${_GS_CREDS} > gs_creds.json' ]
+  args: 
+  - '-c'
+  - 'gcloud secrets versions access latest --secret=${_GS_CREDS} > gs_creds.json'
+
+- id: 'Where did you go'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - 'find . -type f'
 
 - id: 'Run Unit Tests'
   name: 'gcr.io/cloud-builders/docker'
