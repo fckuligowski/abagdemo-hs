@@ -37,6 +37,23 @@ steps:
   - '-c'
   - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
 
+- id: 'Run Functional Tests'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
+
+#Push the image  
+- name: 'gcr.io/cloud-builders/docker'
+  volumes:
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
+  entrypoint: sh
+  args: 
+  - '-c'
+  - 'if test "$BRANCH_NAME" = "master"; then docker push $(cat image_name.txt); fi'
+
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
     _GS_CREDS: 'last-baron-abagdemo'
