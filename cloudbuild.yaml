@@ -59,7 +59,7 @@ steps:
   entrypoint: 'bash'
   args: 
   - '-c'
-  - 'if [[ -f image_found.txt && $(cat image_found.txt) -ne $(cat image_tag.txt) ]]; then docker push $(cat image_name.txt); fi'
+  - 'if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"; then docker push $(cat image_name.txt); fi'
 
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
