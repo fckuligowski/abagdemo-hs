@@ -1,10 +1,15 @@
 steps:
-- name: gcr.io/cloud-builders/gcloud
+- id: 'Get Version'
+  name: 'ubuntu'
   entrypoint: 'bash'
-  args: [ '-c', 'gcloud secrets versions access latest --secret=secret-data > decrypted-data.txt' ]
-- name: gcr.io/cloud-builders/docker
-  entrypoint: 'bash'
-  args: [ '-c', 'docker login --username=fckuligowski --password-stdin < decrypted-data.txt']
-- name: gcr.io/cloud-builders/docker
-  entrypoint: 'bash'
-  args: [ '-c', 'docker image ls']
+  args:
+  - '-c'
+  - 'grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > image_name.txt'
+
+# Build the application container
+- id: 'Build the application container'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: bash
+  args: 
+  - '-c'
+  - 'docker build -t $(cat image_name.txt) .'
