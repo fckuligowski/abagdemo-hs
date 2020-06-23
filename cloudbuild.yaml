@@ -1,109 +1,69 @@
 steps:
 - id: 'Get Version'
   name: 'ubuntu'
-  volumes:
-  - name: 'vervol'
-    path: '/persistent_volume/ver'
-  entrypoint: 'sh'
+  entrypoint: 'bash'
   args:
   - '-c'
-  - 'grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > /persistent_volume/ver/image_name.txt'
+  - |
+    grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > image_name.txt &&
+    grep -oP "image:\s+\K(\S+)(?=:)" k8s/abagdemo-deploy.yaml > image_repo.txt &&
+    grep -oP "image:\s+\S+:\K(.*)" k8s/abagdemo-deploy.yaml > image_tag.txt
 
 # Build the application container
 - id: 'Build the application container'
   name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'vervol'
-    path: '/persistent_volume/ver'
-  entrypoint: sh
+  entrypoint: bash
   args: 
   - '-c'
-  - 'docker build -t $(cat /persistent_volume/ver/image_name.txt) .'
+  - 'docker build -t $(cat image_name.txt) .'
 
-- id: 'Copy tests scripts'
-  name: 'bash'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  args: ['cp', '-R', 'tests', '/persistent_volume']
-
-- id: 'Create Cred Key'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
+- id: 'Get Creds'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
   args: 
-  - 'gcloud'
-  - 'iam'
-  - 'service-accounts'
-  - 'keys'
-  - 'create'
-  - '--iam-account'
-  - 'last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com'
-  - '/persistent_volume/creds/service-account.json'
+  - '-c'
+  - |
+    mkdir -p tmp &&
+    gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json
+
+- id: 'Where did you go'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - 'find . -type f'
 
 - id: 'Run Unit Tests'
   name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  - name: 'vervol'
-    path: '/persistent_volume/ver'
-  entrypoint: 'sh'
+  entrypoint: 'bash'
   args: 
   - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
 
 - id: 'Run Functional Tests'
   name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'testsvol'
-    path: '/persistent_volume/tests'
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  - name: 'vervol'
-    path: '/persistent_volume/ver'
-  entrypoint: 'sh'
+  entrypoint: 'bash'
   args: 
   - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
 
-- id: 'Get/Save Key ID'
-  name: 'stedolan/jq'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  entrypoint: 'sh'
-  args:
-  - '-c'
-  - 'jq ".private_key_id" /persistent_volume/creds/service-account.json -r > /persistent_volume/creds/key.txt'
-
-- id: 'Delete Cred Key'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  volumes:
-  - name: 'credsvol'
-    path: '/persistent_volume/creds'
-  entrypoint: sh
+- id: 'Search if Tag Exists'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
   args: 
   - '-c'
-  - 'gcloud iam service-accounts keys delete $(cat /persistent_volume/creds/key.txt) --iam-account "last-baron-abagdemo@hazel-math-279814.iam.gserviceaccount.com" -q'
+  - 'if test "$BRANCH_NAME" = "master"; then gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt; cat image_found.txt; fi'
 
 #Push the image  
 - name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'vervol'
-    path: '/persistent_volume/ver'
-  entrypoint: sh
+  entrypoint: 'bash'
   args: 
   - '-c'
-  - 'if test "$BRANCH_NAME" = "master"; then docker push $(cat /persistent_volume/ver/image_name.txt); fi'
+  - 'if [[ -f image_found.txt && $(cat image_found.txt) -ne $(cat image_tag.txt) ]]; then docker push $(cat image_name.txt); fi'
 
 substitutions:
-    # Google Storage Creds
-    _GOOGLE_APPLICATION_CREDENTIALS: '/abagdemo/creds/service-account.json'
     _APP_NAME: 'abagdemo-gcp'
+    _GS_CREDS: 'last-baron-abagdemo'
 
 options:
     substitution_option: 'ALLOW_LOOSE'
