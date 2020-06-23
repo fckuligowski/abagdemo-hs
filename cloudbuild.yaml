@@ -1,4 +1,8 @@
 steps:
+# Get the Image repo and tag name (version) from the k8s deploy manifest
+# image_name.txt = repo + tag name
+# image_repo.txt = repo name only
+# image_tag.txt = tag name only
 - id: 'Get Version'
   name: 'ubuntu'
   entrypoint: 'bash'
@@ -17,6 +21,7 @@ steps:
   - '-c'
   - 'docker build -t $(cat image_name.txt) .'
 
+# Get the credentials for accessing Google Storage, because the app needs those.
 - id: 'Get Creds'
   name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: 'bash'
@@ -26,13 +31,7 @@ steps:
     mkdir -p tmp &&
     gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json
 
-- id: 'Where did you go'
-  name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
-  - 'find . -type f'
-
+# Run the application Unit tests
 - id: 'Run Unit Tests'
   name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
@@ -40,6 +39,7 @@ steps:
   - '-c'
   - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
 
+# Run the application Functional tests
 - id: 'Run Functional Tests'
   name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
@@ -47,6 +47,8 @@ steps:
   - '-c'
   - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
 
+# Determine if an image has already been created with this tag,
+# but only if we're merging into the master branch.
 - id: 'Search if Tag Exists'
   name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: 'bash'
@@ -54,7 +56,8 @@ steps:
   - '-c'
   - 'if test "$BRANCH_NAME" = "master"; then gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt; cat image_found.txt; fi'
 
-#Push the image  
+# Push the image to Google Container Repo, but only if that tag
+# doesn't already exist
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: 
