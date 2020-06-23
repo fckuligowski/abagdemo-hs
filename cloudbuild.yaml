@@ -14,15 +14,21 @@ steps:
   - '-c'
   - 'docker build -t $(cat image_name.txt) .'
 
+- id: 'Get Creds'
+  name: gcr.io/cloud-builders/gcloud
+  entrypoint: 'bash'
+  args: [ '-c', 'gcloud secrets versions access latest --secret=${_GS_CREDS} > gs_creds.json' ]
+
 - id: 'Run Unit Tests'
   name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: 
   - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests $(cat image_name.txt) -e GOOGLE_APPLICATION_CREDENTIALS=gs_creds.json /bin/sh -c "/abagdemo/tests/testit.sh unit"'
 
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
+    _GS_CREDS: 'last-baron-abagdemo'
 
 options:
     substitution_option: 'ALLOW_LOOSE'
