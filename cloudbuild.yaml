@@ -33,7 +33,7 @@ steps:
   entrypoint: 'bash'
   args: 
   - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -e GOOGLE_APPLICATION_CREDENTIALS=gs_creds.json $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -e GOOGLE_APPLICATION_CREDENTIALS="./gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
 
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
