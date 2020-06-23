@@ -46,10 +46,7 @@ steps:
 
 #Push the image  
 - name: 'gcr.io/cloud-builders/docker'
-  volumes:
-  - name: 'vervol'
-    path: '/persistent_volume/ver'
-  entrypoint: sh
+  entrypoint: 'bash'
   args: 
   - '-c'
   - 'if test "$BRANCH_NAME" = "master"; then docker push $(cat image_name.txt); fi'
