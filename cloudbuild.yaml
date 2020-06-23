@@ -52,21 +52,14 @@ steps:
   entrypoint: 'bash'
   args: 
   - '-c'
-  - 'if test "$BRANCH_NAME" = "master"; then gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt; fi'
-
-- id: 'Show Found Tag'
-  name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
-  - '[ -f image_found.txt ] && cat image_found.txt'
+  - 'if test "$BRANCH_NAME" = "master"; then gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt; cat image_found.txt; fi'
 
 #Push the image  
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: 
   - '-c'
-  - 'if [ test -f image_found.txt && $(cat image_found.txt) -ne $(cat image_tag.txt); then docker push $(cat image_name.txt); fi'
+  - 'if [[ -f image_found.txt && $(cat image_found.txt) -ne $(cat image_tag.txt) ]]; then docker push $(cat image_name.txt); fi'
 
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
