@@ -20,3 +20,9 @@ steps:
   args: 
   - '-c'
   - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
+
+substitutions:
+    _APP_NAME: 'abagdemo-gcp'
+
+options:
+    substitution_option: 'ALLOW_LOOSE'
