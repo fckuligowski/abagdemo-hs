@@ -1,8 +1,24 @@
 steps:
+- id: 'Get Version'
+  name: 'ubuntu'
+  volumes:
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - 'grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > /persistent_volume/ver/image_name.txt'
+
 # Build the application container
 - id: 'Build the application container'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}', '.']
+  volumes:
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
+  entrypoint: sh
+  args: 
+  - '-c'
+  - 'docker build -t $(cat /persistent_volume/ver/image_name.txt) .'
 
 - id: 'Copy tests scripts'
   name: 'bash'
@@ -33,21 +49,12 @@ steps:
     path: '/persistent_volume/tests'
   - name: 'credsvol'
     path: '/persistent_volume/creds'
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
+  entrypoint: 'sh'
   args: 
-  - 'run'
-  - '--name'
-  - '${_APP_NAME}'
-  - '--rm'
-  - '-v'
-  - 'testsvol:/abagdemo/tests'
-  - '-v'
-  - 'credsvol:/abagdemo/creds'
-  - '-e'
-  - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
-  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - '/bin/sh'
   - '-c'
-  - '/abagdemo/tests/testit.sh unit'
+  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
 
 - id: 'Run Functional Tests'
   name: 'gcr.io/cloud-builders/docker'
@@ -56,21 +63,12 @@ steps:
     path: '/persistent_volume/tests'
   - name: 'credsvol'
     path: '/persistent_volume/creds'
+  - name: 'vervol'
+    path: '/persistent_volume/ver'
+  entrypoint: 'sh'
   args: 
-  - 'run'
-  - '--name'
-  - '${_APP_NAME}'
-  - '--rm'
-  - '-v'
-  - 'testsvol:/abagdemo/tests'
-  - '-v'
-  - 'credsvol:/abagdemo/creds'
-  - '-e'
-  - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
-  - 'gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}'
-  - '/bin/sh'
   - '-c'
-  - '/abagdemo/tests/testit.sh functional'
+  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
 
 - id: 'Get/Save Key ID'
   name: 'stedolan/jq'
@@ -97,18 +95,12 @@ steps:
   entrypoint: sh
   args: 
   - '-c'
-  - 'if test "$BRANCH_NAME" = "master"; then docker push "gcr.io/${_DOCKER_REPO}/${_APP_NAME}:${_VERSION}"; fi'
-#  args: ['push','gcr.io/${_PROJECT}/${_CONTAINERNAME}:${_VERSION}']
+  - 'if test "$BRANCH_NAME" = "master"; then docker push $(cat /persistent_volume/ver/image_name.txt); fi'
 
 substitutions:
-    # Docker Repo
-    _DOCKER_REPO: hazel-math-279814
-    _APP_NAME: abagdemo-gcp
     # Google Storage Creds
     _GOOGLE_APPLICATION_CREDENTIALS: '/abagdemo/creds/service-account.json'
-    
-    # Developers ONLY change
-    _VERSION: v1.x
-    
+    _APP_NAME: 'abagdemo-gcp'
+
 options:
     substitution_option: 'ALLOW_LOOSE'

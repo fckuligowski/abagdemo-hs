@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: abagdemo
-        image: fckuligowski/abagdemo:v1.0.0
+        image: gcr.io/hazel-math-279814/abagdemo-gcp:v1.0.1
         ports:
         - containerPort: 5000
         env:
