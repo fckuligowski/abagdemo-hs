@@ -54,7 +54,13 @@ steps:
   entrypoint: 'sh'
   args: 
   - '-c'
-  - 'docker run --name ${_APP_NAME} --rm $(cat /persistent_volume/ver/image_name.txt) env'
+  - 'docker'
+  - 'run'
+  - '--name'
+  - '${_APP_NAME}'
+  - '--rm'
+  - '$(cat /persistent_volume/ver/image_name.txt)'
+  - 'env'
 #  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c /abagdemo/tests/testit.sh unit'
 
 - id: 'Run Functional Tests'
@@ -66,6 +72,7 @@ steps:
     path: '/persistent_volume/creds'
   - name: 'vervol'
     path: '/persistent_volume/ver'
+  entrypoint: 'sh'
   args: 
   - 'run'
   - '--name'
