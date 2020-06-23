@@ -54,7 +54,7 @@ steps:
   entrypoint: 'sh'
   args: 
   - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c /abagdemo/tests/testit.sh unit'
+  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
 
 - id: 'Run Functional Tests'
   name: 'gcr.io/cloud-builders/docker'
@@ -68,7 +68,7 @@ steps:
   entrypoint: 'sh'
   args: 
   - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c /abagdemo/tests/testit.sh functional'
+  - 'docker run --name ${_APP_NAME} --rm -v testsvol:/abagdemo/tests -v credsvol:/abagdemo/creds -e GOOGLE_APPLICATION_CREDENTIALS=${_GOOGLE_APPLICATION_CREDENTIALS} $(cat /persistent_volume/ver/image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
 
 - id: 'Get/Save Key ID'
   name: 'stedolan/jq'
