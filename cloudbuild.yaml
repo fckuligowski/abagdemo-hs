@@ -14,9 +14,9 @@ steps:
   - '-c'
   - 'docker build -t $(cat image_name.txt) .'
 
-- id: 'List Tests'
+- id: 'Run Unit Tests'
   name: 'gcr.io/cloud-builders/docker'
-  entrypoint: bash
+  entrypoint: 'bash'
   args: 
   - '-c'
-  - 'find . -type f'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
