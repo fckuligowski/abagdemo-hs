@@ -57,7 +57,8 @@ steps:
   entrypoint: 'bash'
   args: 
   - '-c'
-  - if test "$BRANCH_NAME" = "master"
+  - |
+    if test "$BRANCH_NAME" = "master"
     then 
         gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt
         cat image_found.txt
