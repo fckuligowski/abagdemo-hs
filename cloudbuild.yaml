@@ -25,15 +25,12 @@ steps:
 
 - id: 'Git Status'
   name: 'gcr.io/cloud-builders/git'
-  dir: /workspace/tagclone
   entrypoint: 'bash'
   args:
   - '-c'
   - |
-    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
+    if test -f image_found.txt
     then
-        git clone 'https://github.com/fckuligowski/abagdemo-gcp'
-        cd abagdemo-gcp
         git status
         ls -al
         pwd
