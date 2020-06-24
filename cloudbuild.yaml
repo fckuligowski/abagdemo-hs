@@ -47,7 +47,7 @@ steps:
         mkdir tagclone
         ls -al tmp
         cd tagclone
-        git clone 'https://github.com/fckuligowski/abagdemo-gcp' --config user.name=$(cat ../tmp/git_user.txt) --config user.email="no@nomail.com" || exit 1
+        git clone https://github.com/fckuligowski/abagdemo-gcp --config user.name=$(cat ../tmp/git_user.txt) --config user.email="no@nomail.com" || exit 1
         cd abagdemo-gcp
         echo "step 00"
         git tag -a "$(cat ../../image_tag.txt)" -m "version $(cat ../../image_tag.txt)" || exit 1
@@ -55,7 +55,7 @@ steps:
         git tag
         echo "step 02"
         ls -al ../../tmp
-        git push 'https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@github.com/fckuligowski/abagdemo-gcp' --tags || exit 1
+        git push https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@github.com/fckuligowski/abagdemo-gcp --tags || exit 1
         echo "step 03"
         git status
         echo "step 04"
