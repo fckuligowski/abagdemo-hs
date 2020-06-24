@@ -14,7 +14,7 @@ steps:
     grep -oP "image:\s+\S+:\K(.*)" ${_K8S_DEPLOY_FILE} > image_tag.txt
 
 # Dummy image_found.txt
-- id: 'Get Version'
+- id: 'Dummy'
   name: 'ubuntu'
   entrypoint: 'bash'
   args:
@@ -34,6 +34,8 @@ steps:
         gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER}
         kubectl set image deploy/${_K8S_DEPLOY} ${_K8S_CONT}=$(cat image_name.txt) -n ${_K8S_NS} --record
         # kubectl apply -f ${_K8S_DEPLOY_FILE} --record
+    else
+        echo "Skipped updating Image in k8s"
     fi
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
