@@ -54,6 +54,7 @@ steps:
         echo "step 01"
         git tag
         echo "step 02"
+        ls -al ../../tmp
         git push 'https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@github.com/fckuligowski/abagdemo-gcp' --tags || exit 1
         echo "step 03"
         git status
