@@ -21,7 +21,10 @@ steps:
   - 'pods'
   - '-n'
   - ${_K8S_NS}
-
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+  
 # Update the container image using kubectl set
 - id: 'Update Image in k8s'
   name: 'gcr.io/cloud-builders/kubectl'
