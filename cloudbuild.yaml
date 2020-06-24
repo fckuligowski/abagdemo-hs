@@ -33,7 +33,7 @@ steps:
      then
          mkdir tmp
          cd tmp
-         git clone 'https://github.com/fckuligowski/abagdemo-gcp
+         git clone 'https://github.com/fckuligowski/abagdemo-gcp'
          cd abagdemo-gcp
          git status
      fi
