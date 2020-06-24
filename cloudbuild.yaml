@@ -13,56 +13,23 @@ steps:
     grep -oP "image:\s+\K(\S+)(?=:)" k8s/abagdemo-deploy.yaml > image_repo.txt &&
     grep -oP "image:\s+\S+:\K(.*)" k8s/abagdemo-deploy.yaml > image_tag.txt
 
-# Build the application container
-- id: 'Build the application container'
-  name: 'gcr.io/cloud-builders/docker'
-  entrypoint: bash
+- id: 'Add Tag to Git Repo'
+  name: 'gcr.io/cloud-builders/git'
   args: 
-  - '-c'
-  - 'docker build -t $(cat image_name.txt) .'
+  - 'tag'
+  - '-a'
+  - '$(cat image_tag.txt)'
+  - '-m'
+  - '"${_APP_NAME} version $(cat image_tag.txt)"'
 
-# Get the credentials for accessing Google Storage, because the app needs those.
-- id: 'Get Creds'
-  name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
+- id: 'Push Tag to Git Repo'
+  name: 'gcr.io/cloud-builders/git'
   args: 
-  - '-c'
-  - |
-    mkdir -p tmp &&
-    gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json
+  - 'push'
+  - '--tags'
 
-# Run the application Unit tests
-- id: 'Run Unit Tests'
-  name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
-
-# Run the application Functional tests
-- id: 'Run Functional Tests'
-  name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
-  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
-
-# Determine if an image has already been created with this tag,
-# but only if we're merging into the master branch.
-- id: 'Search if Tag Exists'
-  name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
-  - 'if test "$BRANCH_NAME" = "master"; then gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt; cat image_found.txt; fi'
-
-# Push the image to Google Container Repo, but only if that tag
-# doesn't already exist
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
-  - 'if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"; then docker push $(cat image_name.txt); fi'
+  #  sh "git tag -a ${imageTag} -m 'abagdemo version ${imageTag}'"
+#            sh "git push 'https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/fckuligowski/abagdemo' --tags"
 
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
