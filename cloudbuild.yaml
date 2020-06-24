@@ -13,7 +13,7 @@ steps:
     grep -oP "image:\s+\K(\S+)(?=:)" k8s/abagdemo-deploy.yaml > image_repo.txt &&
     grep -oP "image:\s+\S+:\K(.*)" k8s/abagdemo-deploy.yaml > image_tag.txt
 
-- id: 'Take a Look'
+- id: 'Dummy for image_found.txt'
   name: 'gcr.io/cloud-builders/git'
   entrypoint: 'bash'
   args:
@@ -22,6 +22,20 @@ steps:
     cp image_repo.txt image_found.txt && 
     ls -al &&
     pwd 
+
+# Get the credentials for accessing Google Storage, because the app needs those.
+# And for Git because we need those to add a new Tag to the Git repo.
+- id: 'Get Creds'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - |
+    mkdir -p tmp &&
+    gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json &&
+    gcloud secrets versions access latest --secret=${_GIT_USER} > tmp/git_user.txt &&
+    gcloud secrets versions access latest --secret=${_GIT_PWD} > tmp/git_pwd.txt &&
+
 
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
@@ -38,16 +52,16 @@ steps:
         ls -al
         pwd
         git tag -a "$(cat ../../image_tag.txt)" -m "version $(cat ../../image_tag.txt)" || exit 1
-        git push 'https://github.com/fckuligowski/abagdemo-gcp' --tags || exit 1
+        git push 'https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@github.com/fckuligowski/abagdemo-gcp' --tags || exit 1
         git status
     fi
 
-  #  sh "git tag -a ${imageTag} -m 'abagdemo version ${imageTag}'"
-#            sh "git push 'https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/fckuligowski/abagdemo' --tags"
 
 substitutions:
     _APP_NAME: 'abagdemo-gcp'
     _GS_CREDS: 'last-baron-abagdemo'
+    _GIT_USER: 'fckuligowski-git-user'
+    _GIT_PWD: 'fckuligowski-git-pwd'
 
 options:
     substitution_option: 'ALLOW_LOOSE'
