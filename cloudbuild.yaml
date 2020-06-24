@@ -16,11 +16,12 @@ steps:
 # Update the container image using kubectl set
 - id: 'Update Image in k8s'
   name: 'gcr.io/cloud-builders/kubectl'
+  entrypoint: 'bash'
   args:
-  - 'apply'
-  - '-f'
-  - ${_K8S_DEPLOY_FILE}
-  - '--record'
+  - '-c'
+  - |
+    gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER}
+    kubectl apply -f ${_K8S_DEPLOY_FILE} --record
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
