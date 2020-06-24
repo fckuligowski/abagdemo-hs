@@ -23,7 +23,7 @@ steps:
     ls -al &&
     pwd 
 
-- id: 'Git Status'
+- id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
   entrypoint: 'bash'
   args:
@@ -31,25 +31,16 @@ steps:
   - |
     if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
     then
-        git status
+        mkdir tagclone
+        cd tagclone
+        git clone 'https://github.com/fckuligowski/abagdemo-gcp'
+        cd abagdemo-gcp
         ls -al
         pwd
+        git tag -a "$(cat image_tag.txt)" -m "version $(cat image_tag.txt)"
+        git push 'https://github.com/fckuligowski/abagdemo-gcp' --tags"
+        git status
     fi
-
-- id: 'Add Tag to Git Repo'
-  name: 'gcr.io/cloud-builders/git'
-  args: 
-  - 'tag'
-  - '-a'
-  - '$(cat image_tag.txt)'
-  - '-m'
-  - '"${_APP_NAME} version $(cat image_tag.txt)"'
-
-- id: 'Push Tag to Git Repo'
-  name: 'gcr.io/cloud-builders/git'
-  args: 
-  - 'push'
-  - '--tags'
 
   #  sh "git tag -a ${imageTag} -m 'abagdemo version ${imageTag}'"
 #            sh "git push 'https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/fckuligowski/abagdemo' --tags"
