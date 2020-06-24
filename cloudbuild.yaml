@@ -22,6 +22,11 @@ steps:
     ls -al &&
     pwd
 
+- id: 'Git Status'
+  name: 'gcr.io/cloud-builders/git'
+  args: 
+  - 'status'
+
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
   args: 
