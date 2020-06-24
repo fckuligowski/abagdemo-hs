@@ -62,7 +62,7 @@ steps:
 # Push the image to Google Container Repo, but only if that tag
 # doesn't already exist
 - id: 'Push Image to Repo'
-- name: 'gcr.io/cloud-builders/docker'
+  name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: 
   - '-c'
