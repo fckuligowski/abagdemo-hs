@@ -48,7 +48,7 @@ steps:
         cd tagclone
         git clone https://${_GIT_REPO} --config user.name=$(cat ../tmp/git_user.txt) --config user.email="no@nomail.com" || exit 1
         cd ${_APP_NAME}
-        git tag -a "$(cat ../../image_tag.txt)" -m "${GIT_TAG_CMT} $(cat ../../image_tag.txt)" || exit 1
+        git tag -a "$(cat ../../image_tag.txt)" -m "${_GIT_TAG_CMT} $(cat ../../image_tag.txt)" || exit 1
         git push https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@${_GIT_REPO} --tags || exit 1
     fi
 
