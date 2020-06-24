@@ -15,9 +15,12 @@ steps:
 
 - id: 'Take a Look'
   name: 'gcr.io/cloud-builders/git'
-  args: 
-  - 'ls'
-  - '-al'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    ls -al &&
+    pwd
 
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
