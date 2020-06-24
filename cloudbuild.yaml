@@ -19,7 +19,8 @@ steps:
   - 'set'
   - 'image'
   - 'deployment/${_K8S_DEPLOY}'
-  - '-n ${_K8S_NS}'
+  - '-n '
+  - '${_K8S_NS}'
   - '${_K8S_CONT}=$(cat image_name.txt)'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
