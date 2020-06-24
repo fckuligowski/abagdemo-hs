@@ -30,14 +30,14 @@ steps:
   args:
   - '-c'
   - |
-     if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
-     then
-         git clone 'https://github.com/fckuligowski/abagdemo-gcp'
-         cd abagdemo-gcp
-         git status
-         ls -al
-         pwd
-     fi
+    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
+    then
+        git clone 'https://github.com/fckuligowski/abagdemo-gcp'
+        cd abagdemo-gcp
+        git status
+        ls -al
+        pwd
+    fi
 
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
