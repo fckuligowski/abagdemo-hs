@@ -29,7 +29,7 @@ steps:
   args:
   - '-c'
   - |
-    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)" &&
+    if [[ -f image_found.txt && "$(cat image_found.txt)" != "$(cat image_tag.txt)" ]] &&
     then &&
         mkdir tmp &&
         cd tmp &&
