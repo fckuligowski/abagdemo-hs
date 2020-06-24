@@ -48,10 +48,15 @@ steps:
         cd tagclone
         git clone 'https://github.com/fckuligowski/abagdemo-gcp' || exit 1
         cd abagdemo-gcp
+        echo "step 00"
         git tag -a "$(cat ../../image_tag.txt)" -m "version $(cat ../../image_tag.txt)" || exit 1
+        echo "step 01"
         git tag
+        echo "step 02"
         git push 'https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@github.com/fckuligowski/abagdemo-gcp' --tags || exit 1
+        echo "step 03"
         git status
+        echo "step 04"
     fi
 
 
