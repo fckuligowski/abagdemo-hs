@@ -15,7 +15,7 @@ steps:
 
 # Update the container image using kubectl set
 - id: 'Try k8s'
-- name: 'gcr.io/cloud-builders/kubectl'
+  name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: 'bash'
   args:
   - '-c'
