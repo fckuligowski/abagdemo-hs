@@ -38,7 +38,7 @@ steps:
         ls -al
         pwd
         git tag -a "$(cat image_tag.txt)" -m "version $(cat image_tag.txt)"
-        git push 'https://github.com/fckuligowski/abagdemo-gcp' --tags"
+        git push 'https://github.com/fckuligowski/abagdemo-gcp' --tags
         git status
     fi
 
