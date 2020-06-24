@@ -20,7 +20,7 @@ steps:
   args:
   - '-c'
   - |
-    cp image_tag.txt image_found.txt
+    cp image_repo.txt image_found.txt
 
 # Update the container image using kubectl set
 - id: 'Update Image in k8s'
@@ -31,8 +31,8 @@ steps:
   - |
     if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
     then
-        gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER}
-        kubectl set image deploy/${_K8S_DEPLOY} ${_K8S_CONT}=$(cat image_name.txt) -n ${_K8S_NS} --record
+        gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER} || exit 1
+        kubectl set image deploy/${_K8S_DEPLOY} ${_K8S_CONT}=$(cat image_name.txt) -n ${_K8S_NS} --record || exit 1
         # kubectl apply -f ${_K8S_DEPLOY_FILE} --record
     else
         echo "Skipped updating Image in k8s"
