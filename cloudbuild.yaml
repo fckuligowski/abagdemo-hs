@@ -25,6 +25,7 @@ steps:
 
 - id: 'Git Status'
   name: 'gcr.io/cloud-builders/git'
+  dir: /workspace/tagclone
   entrypoint: 'bash'
   args:
   - '-c'
