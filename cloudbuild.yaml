@@ -19,7 +19,7 @@ steps:
   args:
   - '-c'
   - |
-    cp image_tag.txt image_found.txt && 
+    cp image_repo.txt image_found.txt && 
     ls -al &&
     pwd 
 
