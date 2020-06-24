@@ -14,7 +14,17 @@ steps:
     grep -oP "image:\s+\S+:\K(.*)" k8s/abagdemo-deploy.yaml > image_tag.txt
 
 # Update the container image using kubectl set
+- id: 'Try k8s'
 - name: 'gcr.io/cloud-builders/kubectl'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    kubectl get pods -n ${_K8S_NS}
+
+# Update the container image using kubectl set
+- id: 'Update Image in k8s'
+  name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: 'bash'
   args:
   - '-c'
