@@ -17,12 +17,9 @@ steps:
 - id: 'Update Image in k8s'
   name: 'gcr.io/cloud-builders/kubectl'
   args:
-  - 'set'
-  - 'image'
-  - 'deployment/${_K8S_DEPLOY}'
-  - '${_K8S_CONT}="$(cat image_name.txt)"'
-  - '-n'
-  - ${_K8S_NS}
+  - 'apply'
+  - '-f'
+  - 'k8s/abagdemo-deploy.yaml'
   - '--record'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
