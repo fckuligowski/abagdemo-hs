@@ -17,12 +17,12 @@ spec:
     spec:
       containers:
       - name: abagdemo
-        image: gcr.io/hazel-math-279814/abagdemo-gcp:v1.0.2
+        image: gcr.io/hazel-math-279814/abagdemo-gcp:v1.0.3
         ports:
         - containerPort: 5000
         env:
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: "/home/abagdemo/instance/creds/hazel-math-279814-ab43b8692187.json"
+            value: "/home/abagdemo/instance/creds/hazel-math-279814.json"
         command: ["/bin/sh", "/abagdemo/runit.sh"]
         volumeMounts:
         - name: gcp-creds
