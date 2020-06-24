@@ -13,14 +13,92 @@ steps:
     grep -oP "image:\s+\K(\S+)(?=:)" ${_K8S_DEPLOY_FILE} > image_repo.txt &&
     grep -oP "image:\s+\S+:\K(.*)" ${_K8S_DEPLOY_FILE} > image_tag.txt
 
-# Dummy image_found.txt
-- id: 'Dummy'
-  name: 'ubuntu'
+# Build the application container
+- id: 'Build the application container'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: bash
+  args: 
+  - '-c'
+  - 'docker build -t $(cat image_name.txt) .'
+
+# Get the credentials for accessing Google Storage, because the app needs those.
+# And for Git because we need those to add a new Tag to the Git repo.
+- id: 'Get Creds'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - |
+    mkdir -p tmp &&
+    gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json &&
+    gcloud secrets versions access latest --secret=${_GIT_USER} > tmp/git_user.txt &&
+    gcloud secrets versions access latest --secret=${_GIT_PWD} > tmp/git_pwd.txt
+
+# Run the application Unit tests
+- id: 'Run Unit Tests'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
+
+# Run the application Functional tests
+- id: 'Run Functional Tests'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh functional"'
+
+# Determine if an image has already been created with this tag,
+# but only if we're merging into the master branch.
+- id: 'Search if Tag Exists'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - if test "$BRANCH_NAME" = "master"
+    then 
+        gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt
+        cat image_found.txt
+    else
+        echo "Skipping further steps because branch $BRANCH_NAME is not master."
+    fi
+
+# Push the image to Google Container Repo, but only if that tag
+# doesn't already exist
+- id: 'Push Image to Repo'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - |
+    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
+    then 
+        docker push $(cat image_name.txt) || exit 1
+    else
+        echo "Skipped pushing Container Image to Registry"
+    fi
+
+# Add a new Tag to the GitHub repo, but only if that tag
+# doesn't already exist
+- id: 'Add Tag to Git Repo'
+  name: 'gcr.io/cloud-builders/git'
   entrypoint: 'bash'
   args:
   - '-c'
   - |
-    cp image_repo.txt image_found.txt
+    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
+    then
+        mkdir tagclone
+        cd tagclone
+        git clone https://${_GIT_REPO} --config user.name=$(cat ../tmp/git_user.txt) --config user.email="no@nomail.com" || exit 1
+        cd ${_APP_NAME}
+        git tag -a "$(cat ../../image_tag.txt)" -m "${_GIT_TAG_CMT} $(cat ../../image_tag.txt)" || exit 1
+        git push https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@${_GIT_REPO} --tags || exit 1
+    else
+        echo "Skipped creating Tag in Git"
+    fi
 
 # Update the container image using kubectl set
 - id: 'Update Image in k8s'
