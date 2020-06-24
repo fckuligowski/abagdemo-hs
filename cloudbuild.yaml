@@ -13,6 +13,12 @@ steps:
     grep -oP "image:\s+\K(\S+)(?=:)" k8s/abagdemo-deploy.yaml > image_repo.txt &&
     grep -oP "image:\s+\S+:\K(.*)" k8s/abagdemo-deploy.yaml > image_tag.txt
 
+- id: 'Take a Look'
+  name: 'gcr.io/cloud-builders/git'
+  args: 
+  - 'ls'
+  - '-al'
+
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
   args: 
