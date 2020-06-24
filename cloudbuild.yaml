@@ -48,9 +48,8 @@ steps:
         cd tagclone
         git clone 'https://github.com/fckuligowski/abagdemo-gcp' || exit 1
         cd abagdemo-gcp
-        ls -al
-        pwd
         git tag -a "$(cat ../../image_tag.txt)" -m "version $(cat ../../image_tag.txt)" || exit 1
+        git tag
         git push 'https://$(cat ../../tmp/git_user.txt):$(cat ../../tmp/git_pwd.txt)@github.com/fckuligowski/abagdemo-gcp' --tags || exit 1
         git status
     fi
