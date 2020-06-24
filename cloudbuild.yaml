@@ -34,8 +34,7 @@ steps:
     mkdir -p tmp &&
     gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json &&
     gcloud secrets versions access latest --secret=${_GIT_USER} > tmp/git_user.txt &&
-    gcloud secrets versions access latest --secret=${_GIT_PWD} > tmp/git_pwd.txt &&
-
+    gcloud secrets versions access latest --secret=${_GIT_PWD} > tmp/git_pwd.txt
 
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
