@@ -19,14 +19,24 @@ steps:
   args:
   - '-c'
   - |
+    cp image_tag.txt image_found.txt && 
     ls -al &&
-    pwd
+    pwd 
 
 - id: 'Git Status'
   name: 'gcr.io/cloud-builders/git'
-  args: 
-  - 'status'
-  - 'https://github.com/fckuligowski/abagdemo-gcp'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)" &&
+    then &&
+        mkdir tmp &&
+        cd tmp &&
+        git clone 'https://github.com/fckuligowski/abagdemo-gcp &&
+        cd abagdemo-gcp &&
+        git status &&
+    fi
 
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
