@@ -20,7 +20,7 @@ steps:
   args:
   - '-c'
   - |
-    cp image_name.txt image_found.txt
+    cp image_tag.txt image_found.txt
 
 # Update the container image using kubectl set
 - id: 'Update Image in k8s'
