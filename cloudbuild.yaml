@@ -9,9 +9,9 @@ steps:
   args:
   - '-c'
   - |
-    grep -oP "image:\s+\K(.*)" k8s/abagdemo-deploy.yaml > image_name.txt &&
-    grep -oP "image:\s+\K(\S+)(?=:)" k8s/abagdemo-deploy.yaml > image_repo.txt &&
-    grep -oP "image:\s+\S+:\K(.*)" k8s/abagdemo-deploy.yaml > image_tag.txt
+    grep -oP "image:\s+\K(.*)" ${_K8S_DEPLOY_FILE} > image_name.txt &&
+    grep -oP "image:\s+\K(\S+)(?=:)" ${_K8S_DEPLOY_FILE} > image_repo.txt &&
+    grep -oP "image:\s+\S+:\K(.*)" ${_K8S_DEPLOY_FILE} > image_tag.txt
 
 # Update the container image using kubectl set
 - id: 'Update Image in k8s'
@@ -19,7 +19,7 @@ steps:
   args:
   - 'apply'
   - '-f'
-  - 'k8s/abagdemo-deploy.yaml'
+  - ${_K8S_DEPLOY_FILE}
   - '--record'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
@@ -42,6 +42,9 @@ substitutions:
     _K8S_NS: 'abagdemo'
     _K8S_DEPLOY: '${_K8S_NS}'
     _K8S_CONT: '${_K8S_NS}'
+    # Name of the file with the k8s Deployment spec - defines the
+    # Container Image Name
+    _K8S_DEPLOY_FILE: 'k8s/abagdemo-deploy.yaml'
     # Name of our GKE Kubernetes Cluster
     _GKE_CLUSTER: 'jenkins-cd'
     _GKE_ZONE: 'us-east1-d'
