@@ -46,7 +46,7 @@ steps:
     then
         mkdir tagclone
         cd tagclone
-        git clone 'https://github.com/fckuligowski/abagdemo-gcp' || exit 1
+        git clone 'https://github.com/fckuligowski/abagdemo-gcp' --config user.name=$(cat ../../tmp/git_user.txt) || exit 1
         cd abagdemo-gcp
         echo "step 00"
         git tag -a "$(cat ../../image_tag.txt)" -m "version $(cat ../../image_tag.txt)" || exit 1
