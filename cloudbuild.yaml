@@ -13,6 +13,15 @@ steps:
     grep -oP "image:\s+\K(\S+)(?=:)" ${_K8S_DEPLOY_FILE} > image_repo.txt &&
     grep -oP "image:\s+\S+:\K(.*)" ${_K8S_DEPLOY_FILE} > image_tag.txt
 
+# Dummy image_found.txt
+- id: 'Get Version'
+  name: 'ubuntu'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    cp image_name.txt image_found.txt
+
 # Update the container image using kubectl set
 - id: 'Update Image in k8s'
   name: 'gcr.io/cloud-builders/kubectl'
@@ -20,8 +29,12 @@ steps:
   args:
   - '-c'
   - |
-    gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER}
-    kubectl apply -f ${_K8S_DEPLOY_FILE} --record
+    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
+    then
+        gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER}
+        kubectl set image deploy/${_K8S_DEPLOY} ${_K8S_CONT}=$(cat image_name.txt) -n ${_K8S_NS} --record
+        # kubectl apply -f ${_K8S_DEPLOY_FILE} --record
+    fi
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
   - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
