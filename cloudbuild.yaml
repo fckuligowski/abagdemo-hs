@@ -26,6 +26,7 @@ steps:
   name: 'gcr.io/cloud-builders/git'
   args: 
   - 'status'
+  - 'https://github.com/fckuligowski/abagdemo-gcp'
 
 - id: 'Add Tag to Git Repo'
   name: 'gcr.io/cloud-builders/git'
