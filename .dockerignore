@@ -1,4 +1,5 @@
 tests*
 build*
 k8s*
+!k8s/abagdemo-deploy.yaml
 *.md

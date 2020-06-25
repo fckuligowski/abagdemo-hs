@@ -18,7 +18,7 @@ docker build -t fckuligowski/abagdemo:v1.x .
 
 If you want to run the container from Docker, and shell into it.
 ```
-docker run -td fckuligowski/abagdemo:v1.1.26 
+docker run --rm -td fckuligowski/abagdemo:v1.1.26 
 docker ps
 docker exec -it f1048684b081 /bin/sh
 docker stop f1048684b081

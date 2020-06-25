@@ -8,8 +8,24 @@ from google.cloud.storage import Blob
 @bags_blueprint.route('/')
 @bags_blueprint.route('/index')
 def index():
-    return 'Welcome to the %s application v1.0.5.' % (
-        current_app.config.get('APP_NAME'))
+    return 'Welcome to the %s application. Version=%s' % (
+        current_app.config.get('APP_NAME'), get_version())
+
+def get_version():
+    """
+        Read the version number from the version.txt file, which the
+        code pipeline has placed in the cwd. Or show 'unknown' if
+        we can't find the file.
+    """
+    rtn = 'unknown'
+    try:
+        with open('version.txt', 'r') as file:
+            instr = file.read().replace('\n', '')
+            instrs = instr.split(':')
+            rtn = instrs[-1]
+    except Exception as e:
+        pass
+    return rtn
 
 @bags_blueprint.route('/scan', methods=['POST'])
 def scan():
@@ -22,7 +38,7 @@ def scan():
     return rtn
 
 @bags_blueprint.route('/status')
-@bags_blueprint.route('/status/<bag_id>')
+@bags_blueprint.route('/XXXXstatus/<bag_id>')
 def status(bag_id=None):
     """
         Return the last element for the specified bag
@@ -103,4 +119,3 @@ def get_data():
     data_str = blob.download_as_string()
     rtn = json.loads(data_str)
     return rtn, blob
-
