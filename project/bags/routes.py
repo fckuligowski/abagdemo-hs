@@ -8,7 +8,7 @@ from google.cloud.storage import Blob
 @bags_blueprint.route('/')
 @bags_blueprint.route('/index')
 def index():
-    return 'Welcome to the %s application v1.0.4.' % (
+    return 'Welcome to the %s application v1.0.5.' % (
         current_app.config.get('APP_NAME'))
 
 @bags_blueprint.route('/scan', methods=['POST'])
