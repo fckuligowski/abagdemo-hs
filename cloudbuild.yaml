@@ -23,7 +23,7 @@ steps:
 
 - id: 'Test it out'
   name: ${_TMP_IMAGE}
-  entrypoint: 'bash'
+  entrypoint: 'sh'
   args: 
   - '-c'
   - |
@@ -34,7 +34,7 @@ steps:
 
 substitutions:
     # Name of our application.
-    _APP_NAME: 'abagdemo-gcp'
+    _APP_NAME: ${REPO_NAME}
     _TMP_IMAGE: gcr.io/${PROJECT_ID}/${_APP_NAME}:${COMMIT_SHA}
     # Name of Google Secret that contains the credentials for our app
     # to connect to  Google Storage.
