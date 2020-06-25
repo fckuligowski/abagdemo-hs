@@ -31,6 +31,13 @@ steps:
     find . -type f
     find /abagdemo -type f
 
+- id: 'Copy tests scripts'
+  name: 'bash'
+  volumes:
+  - name: 'testsvol'
+    path: '/persistent_volume/tests'
+  args: ['cp', '-R', 'tests', '/persistent_volume']
+
 # Get the credentials for accessing Google Storage, because the app needs those.
 # And for Git because we need those to add a new Tag to the Git repo.
 - id: 'Get Creds'
@@ -47,10 +54,14 @@ steps:
 # Run the application Unit tests
 - id: 'Run Unit Tests'
   name: ${_TMP_IMAGE}
+  volumes:
+  - name: 'testsvol'
+    path: '/abagdemo/tests'
   entrypoint: 'sh'
   args: 
   - '-c'
   - |
+    find /abagdemo -type f
     /abagdemo/tests/testit.sh unit
   env:
   - 'GOOGLE_APPLICATION_CREDENTIALS=tmp/gs_creds.txt'
