@@ -21,16 +21,8 @@ steps:
   - '-c'
   - 'docker build -t ${_TMP_IMAGE} .'
 
-- id: 'Test it out'
-  name: ${_TMP_IMAGE}
-  entrypoint: 'sh'
-  args: 
-  - '-c'
-  - |
-    pwd
-    find . -type f
-    find /abagdemo -type f
-
+# Copy Test scripts to a volume so we can mount them in the app directory
+# and run the tests from there
 - id: 'Copy tests scripts'
   name: 'bash'
   volumes:
@@ -50,6 +42,16 @@ steps:
     gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json &&
     gcloud secrets versions access latest --secret=${_GIT_USER} > tmp/git_user.txt &&
     gcloud secrets versions access latest --secret=${_GIT_PWD} > tmp/git_pwd.txt
+
+- id: 'Test it out'
+  name: ${_TMP_IMAGE}
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |
+    pwd
+    find . -type f
+    find /abagdemo -type f
 
 # Run the application Unit tests
 - id: 'Run Unit Tests'
