@@ -28,7 +28,8 @@ steps:
   - '-c'
   - |
     pwd
-    ls -al
+    find . -type f
+    find /abagdemo -type f
 
 # Get the credentials for accessing Google Storage, because the app needs those.
 # And for Git because we need those to add a new Tag to the Git repo.
