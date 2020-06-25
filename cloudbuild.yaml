@@ -32,6 +32,31 @@ steps:
     echo "_TMP_IMAGE=${_TMP_IMAGE}"
     echo "COMMIT_SHA=${COMMIT_SHA}"
 
+# Get the credentials for accessing Google Storage, because the app needs those.
+# And for Git because we need those to add a new Tag to the Git repo.
+- id: 'Get Creds'
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: 
+  - '-c'
+  - |
+    mkdir -p tmp &&
+    gcloud secrets versions access latest --secret=${_GS_CREDS} > tmp/gs_creds.json &&
+    gcloud secrets versions access latest --secret=${_GIT_USER} > tmp/git_user.txt &&
+    gcloud secrets versions access latest --secret=${_GIT_PWD} > tmp/git_pwd.txt
+
+# Run the application Unit tests
+- id: 'Run Unit Tests'
+  name: ${_TMP_IMAGE}
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |
+    /abagdemo/tests/testit.sh unit
+  env:
+  - 'GOOGLE_APPLICATION_CREDENTIALS=tmp/gs_creds.txt'
+  #- 'docker run --name ${_APP_NAME} --rm -v $(pwd)/tests:/abagdemo/tests -v $(pwd)/tmp:/abagdemo/tmp -e GOOGLE_APPLICATION_CREDENTIALS="/abagdemo/tmp/gs_creds.json" $(cat image_name.txt) /bin/sh -c "/abagdemo/tests/testit.sh unit"'
+
 substitutions:
     # Name of our application.
     _APP_NAME: ${REPO_NAME}
