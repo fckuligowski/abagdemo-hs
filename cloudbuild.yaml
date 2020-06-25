@@ -27,10 +27,8 @@ steps:
   args: 
   - '-c'
   - |
-    echo "REPO_NAME=${REPO_NAME}"
-    echo "_HEAD_REPO_URL=${_HEAD_REPO_URL}"
-    echo "_TMP_IMAGE=${_TMP_IMAGE}"
-    echo "COMMIT_SHA=${COMMIT_SHA}"
+    pwd
+    ls -al
 
 # Get the credentials for accessing Google Storage, because the app needs those.
 # And for Git because we need those to add a new Tag to the Git repo.
