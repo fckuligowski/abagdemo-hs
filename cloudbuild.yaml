@@ -9,8 +9,9 @@ steps:
   args:
   - '-c'
   - |
-    image_repo=$(grep -oP "repository:\s+\K(.*)") ${_HELM_VALUES_FILE}
-    image_tag=$(grep -oP "appVersion:\s+\K(.*)") ${_HELM_CHART_FILE}
+    find . -type f
+    image_repo=$(grep -oP "repository:\s+\K(.*)") ${_HELM_VALUES_FILE} || exit 1
+    image_tag=$(grep -oP "appVersion:\s+\K(.*)") ${_HELM_CHART_FILE} || exit 1
     echo $image_repo > image_repo.txt
     echo $image_tag > image_tag.txt
     echo $image_repo:$image_tag > image_name.txt
