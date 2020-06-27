@@ -65,6 +65,7 @@ db.sqlite3-journal
 # Flask stuff:
 instance/creds
 k8s/instance/creds
+helm/abagdemo/creds
 .webassets-cache
 
 # Scrapy stuff:

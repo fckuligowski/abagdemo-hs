@@ -47,4 +47,10 @@ Docker push to repo
 ```
 docker push fckuligowski/abagdemo:v1.0
 ```
-
+**Helm**
+To run Helm from Cloud Builder, you need to install the Helm cloud builder module, with these commands.
+```
+git clone https://github.com/GoogleCloudPlatform/cloud-builders-community
+cd cloud-builders-community/helm 
+gcloud builds submit --config cloudbuild.yaml .
+```
