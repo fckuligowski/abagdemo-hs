@@ -41,7 +41,7 @@ def scan():
 @bags_blueprint.route('/status/<bag_id>')
 def status(bag_id=None):
     """
-        Return the last element for the specified bag
+        Return the last element for the specified bag.
     """
     data_dict = get_bag_data(bag_id)
     rtn = ''
