@@ -148,11 +148,10 @@ steps:
   args:
   - '-c'
   - |
-    if test -f XXXXimage_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
+    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
     then
         gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER} || exit 1
         helm upgrade ${_HELM_APP} ${_HELM_DIR} || exit 1
-        # kubectl apply -f ${_K8S_DEPLOY_FILE} --record
     else
         echo "Skipped updating Image in k8s"
     fi
@@ -181,13 +180,6 @@ substitutions:
     _HELM_DIR: 'helm/${_HELM_APP}'
     _HELM_VALUES_FILE: '${_HELM_DIR}/values.yaml'
     _HELM_CHART_FILE: '${_HELM_DIR}/Chart.yaml'
-    # Kubernetes namespace, deployment, and container names.
-    _K8S_NS: 'abagdemo'
-    _K8S_DEPLOY: '${_K8S_NS}'
-    _K8S_CONT: '${_K8S_NS}'
-    # Name of the file with the k8s Deployment spec - defines the
-    # Container Image Name
-    _K8S_DEPLOY_FILE: 'k8s/abagdemo-deploy.yaml'
     # Name of our GKE Kubernetes Cluster
     _GKE_CLUSTER: 'jenkins-cd'
     _GKE_ZONE: 'us-east1-d'

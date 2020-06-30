@@ -47,6 +47,13 @@ Docker push to repo
 ```
 docker push fckuligowski/abagdemo:v1.0
 ```
+
+**GKE scale cluster for shutdown and startup**
+```
+gcloud container clusters resize jenkins-cd --num-nodes=0 --zone=us-east1-d --node-pool default-pool
+gcloud container clusters resize jenkins-cd --num-nodes=0 --zone=us-east1-d --node-pool more-memory
+```
+
 **Helm**
 To run Helm from Cloud Builder, you need to install the Helm cloud builder module, with these commands.
 ```
