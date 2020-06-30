@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: gcr.io/hazel-math-279814/abagdemo-gcp
+  repository: fckuligowski/abagdemo-gcp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
