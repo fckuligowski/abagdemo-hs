@@ -141,24 +141,6 @@ steps:
         echo "Skipped creating Tag in Git"
     fi
 
-# Update the container image using kubectl set
-- id: 'Update Image in k8s'
-  name: 'gcr.io/$PROJECT_ID/helm'
-  entrypoint: 'bash'
-  args:
-  - '-c'
-  - |
-    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
-    then
-        gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER} || exit 1
-        helm upgrade ${_HELM_APP} ${_HELM_DIR} || exit 1
-    else
-        echo "Skipped updating Image in k8s"
-    fi
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
-
 substitutions:
     # Name of our application.
     _TMP_IMAGE: gcr.io/${PROJECT_ID}/${REPO_NAME}:${COMMIT_SHA}
