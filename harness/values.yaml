@@ -1,0 +1,36 @@
+name: abagdemo
+replicas: 1
+
+image: ${artifact.metadata.image}
+dockercfg: ${artifact.source.dockerconfig}
+
+createNamespace: true
+namespace: ${infra.kubernetes.namespace}
+
+# Service Type allow you to specify what kind of service you want.
+# Possible values for ServiceType are:
+# ClusterIP | NodePort | LoadBalancer | ExternalName
+serviceType: LoadBalancer
+
+# A Service can map an incoming port to any targetPort.
+# targetPort is where application is listening on inside the container.
+servicePort: 5000
+serviceTargetPort: 5000
+
+# Specify all environment variables to be added to the container.
+# The following two maps, config and secrets, are put into a ConfigMap
+# and a Secret, respectively.
+# Both are added to the container environment in podSpec as envFrom source
+# GOOGLE_APPLICATION_CREDENTIALS is the name of the file that has the 
+# Service Account creds for abagdemo to use.
+env:
+  config:
+    key1: value1
+  secrets:
+    GOOGLE_APPLICATION_CREDENTIALS: "/home/abagdemo/instance/creds/${serviceVariable.gcp_account}.json"
+
+# This is the Key file for the Service Account in Google Cloud Platform
+# that allows the abagdemo app to read/write from Google Storage.
+gcpSecretFileName: "${serviceVariable.gcp_account}.json"
+gcpMountPath: "/home/abagdemo/instance/creds"
+gcpSecretData: ${configFile.getAsBase64("gcp_account.json")}
