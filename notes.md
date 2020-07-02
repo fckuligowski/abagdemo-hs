@@ -49,7 +49,7 @@ docker push fckuligowski/abagdemo:v1.0
 ```
 
 **Docker Hub**
-To search Docker Hub and see if the container image already exists there, I had to use an image named "carinadigital/docker-ls" (or write the queries myself using curl, but that caused me problems with my Docker password which has a "$" in it).  
+To search Docker Hub and see if the container image already exists there, I had to use an image named "carinadigital/docker-ls" (or write the queries myself using curl, but that caused problems with my Docker password which has a "$" in it).  
 Cloud Build wants to pull that image every time it runs, and it adds ~30 seconds to the build time.  
 To speed this up, I could download this image and store it in my Google Container Registry, much like I did for the helm image from cloud-builders-community. That image only takes 3 secs to download.  
 I just haven't tried this yet.  
