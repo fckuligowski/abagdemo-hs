@@ -3,10 +3,10 @@ replicas: 1
 # These two values define the app's container image repo and tag name.
 # Harness doesn't actually use these. We just needed a place to put them
 # so that cloudbuild.yaml can parse them and use them during the build.
-# Don't put quotes around the values because its too hard to parse those
+# Don't put quotes around the values because it's too hard to parse those
 # out in the build script (using grep & sed).
 imageRepository: fckuligowski/abagdemo-hs
-imageTag: v1.1.12
+imageTag: v1.1.13
 
 image: ${artifact.metadata.image}
 dockercfg: ${artifact.source.dockerconfig}
