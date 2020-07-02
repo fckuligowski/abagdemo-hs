@@ -60,7 +60,7 @@ steps:
   env:
   - 'GOOGLE_APPLICATION_CREDENTIALS=tmp/gs_creds.json'
 
-# Run the application Functional tests
+# Run the application Functional tests.
 - id: 'Run Functional Tests'
   name: ${_TMP_IMAGE}
   volumes:
