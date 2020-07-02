@@ -9,8 +9,8 @@ steps:
   args:
   - '-c'
   - |
-    image_repo=$(grep -oP "repository:\s+\K(.*)" ${_HELM_VALUES_FILE}) || exit 1
-    image_tag=$(grep -oP "appVersion:\s+\K(.*)" ${_HELM_CHART_FILE}) || exit 1
+    image_repo=$(grep -oP "imageRepository:\s+\K(.*)" ${_HARNESS_VALUES_FILE}) || exit 1
+    image_tag=$(grep -oP "imageTag:\s+\K(.*)" ${_HARNESS_VALUES_FILE}) || exit 1
     echo $image_repo > image_repo.txt
     echo $image_tag > image_tag.txt
     echo $image_repo:$image_tag > image_name.txt
@@ -157,11 +157,8 @@ substitutions:
     # Name of Google Secrets for Docker user name and password.
     _DOCKER_USER: 'fckuligowski-docker-user'
     _DOCKER_PWD: 'fckuligowski-docker-pwd'
-    # Helm chart files, so we can get the tag version number.
-    _HELM_APP: 'abagdemo'
-    _HELM_DIR: 'helm/${_HELM_APP}'
-    _HELM_VALUES_FILE: '${_HELM_DIR}/values.yaml'
-    _HELM_CHART_FILE: '${_HELM_DIR}/Chart.yaml'
+    # Harness manifest files, so we can get the tag version number.
+    _HARNESS_VALUES_FILE: 'harness/values.yaml'
 
 options:
     substitution_option: 'ALLOW_LOOSE'

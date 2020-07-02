@@ -4,7 +4,8 @@ venv*
 __pycache*
 k8s*
 helm*
-!helm/abagdemo/Chart.yaml
+harness*
+!harness/values.yaml
 *.md
 *.yaml
 .git*
