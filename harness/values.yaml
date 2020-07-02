@@ -1,5 +1,7 @@
 name: abagdemo
 replicas: 1
+imageRepository: fckuligowski/abagdemo-hs
+imageTag: "v1.1.12"
 
 image: ${artifact.metadata.image}
 dockercfg: ${artifact.source.dockerconfig}
