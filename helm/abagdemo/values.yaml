@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: fckuligowski/abagdemo-gcp
+  repository: fckuligowski/abagdemo-hs
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
