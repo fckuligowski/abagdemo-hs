@@ -74,22 +74,6 @@ steps:
   env:
   - 'GOOGLE_APPLICATION_CREDENTIALS=tmp/gs_creds.json'
 
-# Determine if an image has already been created with this tag,
-# but only if we're merging into the master branch.
-- id: 'Search if Tag Exists'
-  name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: 
-  - '-c'
-  - |
-    if test "$BRANCH_NAME" = "master"
-    then 
-        gcloud container images list-tags $(cat image_repo.txt) --filter="tags=$(cat image_tag.txt)" --format="get(tags)" > image_found.txt
-        cat image_found.txt
-    else
-        echo "Skipping further steps because branch $BRANCH_NAME is not master."
-    fi
-
 # Get the credentials for Docker so we can push the container image there.
 - id: 'Get Docker Creds'
   name: 'gcr.io/cloud-builders/gcloud'
@@ -97,14 +81,29 @@ steps:
   args: 
   - '-c'
   - |
-    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
-    then
-        mkdir -p tmp &&
-        gcloud secrets versions access latest --secret=${_DOCKER_USER} > tmp/docker_user.txt &&
-        gcloud secrets versions access latest --secret=${_DOCKER_PWD} > tmp/docker_pwd.txt
+    mkdir -p tmp &&
+    gcloud secrets versions access latest --secret=${_DOCKER_USER} > tmp/docker_user.txt &&
+    gcloud secrets versions access latest --secret=${_DOCKER_PWD} > tmp/docker_pwd.txt
+
+# See if an image has already been created with this tag in
+# Docker Hub, but only if we're merging into the master branch.
+- id: 'Search if Tag Exists'
+  name: 'carinadigital/docker-ls'
+  entrypoint: 'sh'
+  args: 
+  - '-c'
+  - |
+    if test "$BRANCH_NAME" = "master"
+    then 
+        docker-ls tags --user "$(cat tmp/docker_user.txt)" --password "$(cat tmp/docker_pwd.txt)" $(cat image_repo.txt) > image_taglist.txt
+        cat image_taglist.txt
+        grep $(cat image_tag.txt) image_taglist.txt -o > image_found.txt
+        cat image_found.txt
+    else
+        echo "Skipping further steps because the branch $BRANCH_NAME is not master."
     fi
 
-# Push the image to Google Container Repo, but only if that tag
+# Push the image to Docker Hub, but only if that tag
 # doesn't already exist
 - id: 'Push Image to Repo'
   name: 'gcr.io/cloud-builders/docker'
@@ -140,24 +139,6 @@ steps:
     else
         echo "Skipped creating Tag in Git"
     fi
-
-# Update the container image using kubectl set
-- id: 'Update Image in k8s'
-  name: 'gcr.io/$PROJECT_ID/helm'
-  entrypoint: 'bash'
-  args:
-  - '-c'
-  - |
-    if test -f image_found.txt && test "$(cat image_found.txt)" != "$(cat image_tag.txt)"
-    then
-        gcloud container clusters get-credentials --project=$PROJECT_ID --zone=${_GKE_ZONE} ${_GKE_CLUSTER} || exit 1
-        helm upgrade ${_HELM_APP} ${_HELM_DIR} || exit 1
-    else
-        echo "Skipped updating Image in k8s"
-    fi
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=${_GKE_ZONE}'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
   
 substitutions:
     # Name of our application.
@@ -175,14 +156,11 @@ substitutions:
     # Name of Google Secrets for Docker user name and password.
     _DOCKER_USER: 'fckuligowski-docker-user'
     _DOCKER_PWD: 'fckuligowski-docker-pwd'
-    # Helm chart files
+    # Helm chart files, so we can get the tag version number.
     _HELM_APP: 'abagdemo'
     _HELM_DIR: 'helm/${_HELM_APP}'
     _HELM_VALUES_FILE: '${_HELM_DIR}/values.yaml'
     _HELM_CHART_FILE: '${_HELM_DIR}/Chart.yaml'
-    # Name of our GKE Kubernetes Cluster
-    _GKE_CLUSTER: 'jenkins-cd'
-    _GKE_ZONE: 'us-east1-d'
 
 options:
     substitution_option: 'ALLOW_LOOSE'
