@@ -87,8 +87,9 @@ steps:
 
 # See if an image has already been created with this tag in
 # Docker Hub, but only if we're merging into the master branch.
+# (The container image is a copy of 'carinadigital/docker-ls').
 - id: 'Search if Tag Exists'
-  name: 'carinadigital/docker-ls'
+  name: 'gcr.io/hazel-math-279814/docker-ls'
   entrypoint: 'sh'
   args: 
   - '-c'
