@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-generator
+  namespace: abagdemo
+  labels:
+    purpose: loadgen
+spec:
+  containers:
+  - name: loadgen
+    image: radial/busyboxplus:curl
+    command: ["/bin/sh"]
+    args: 
+    - '-c'
+    - |
+      while true; do 
+        curl abagdemo-svc.prod:5000/status/001 
+        sleep 15
+        curl abagdemo-svc.prod:5000/history/001 
+        sleep 15
+        curl abagdemo-svc.prod:5000/status/002
+        sleep 15
+        curl abagdemo-svc.prod:5000/history/002
+        sleep 15
+      done
+  restartPolicy: OnFailure
