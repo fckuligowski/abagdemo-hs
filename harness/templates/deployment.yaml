@@ -53,6 +53,11 @@ spec:
       - name: {{.Values.name}}
         image: {{.Values.image}}
         command: ["/bin/sh", "/abagdemo/runit.sh"]
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         volumeMounts:
         - name: gcp-creds
           mountPath: {{.Values.gcpMountPath}}
@@ -76,9 +81,4 @@ spec:
         - name: gcp-creds
           secret:
             secretName: {{.Values.name}}-gcp-creds
-      env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
      
