@@ -9,13 +9,14 @@ from flask import current_app, request
 from prometheus_client import Counter, Histogram
 import time
 import sys
+import os
 
 REQUEST_COUNT = Counter(
     'request_count', 'App Request Count',
-    ['app_name', 'method', 'endpoint', 'http_status']
+    ['app_name', 'method', 'endpoint', 'http_status', 'pod_name']
 )
 REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency',
-    ['app_name', 'endpoint']
+    ['app_name', 'endpoint', 'pod_name']
 )
 
 def start_timer():
@@ -23,12 +24,12 @@ def start_timer():
 
 def stop_timer(response):
     resp_time = time.time() - request.start_time
-    REQUEST_LATENCY.labels(current_app.config.get('APP_NAME'), request.path).observe(resp_time)
+    REQUEST_LATENCY.labels(current_app.config.get('APP_NAME'), request.path, get_pod_name()).observe(resp_time)
     return response
 
 def record_request_data(response):
     REQUEST_COUNT.labels(current_app.config.get('APP_NAME'), request.method, request.path,
-            response.status_code).inc()
+            response.status_code, get_pod_name()).inc()
     return response
 
 def setup_metrics(app):
@@ -37,3 +38,9 @@ def setup_metrics(app):
     # to be executed first
     app.after_request(record_request_data)
     app.after_request(stop_timer)
+
+def get_pod_name():
+    rtn = ''
+    if os.environ.get('POD_NAME'):
+        rtn = os.environ.get('POD_NAME')
+    return rtn

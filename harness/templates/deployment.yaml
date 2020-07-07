@@ -76,4 +76,9 @@ spec:
         - name: gcp-creds
           secret:
             secretName: {{.Values.name}}-gcp-creds
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
      
