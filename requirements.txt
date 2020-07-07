@@ -2,4 +2,5 @@ wheel
 python-dotenv
 flask
 pytest
+prometheus_client==0.0.19
 google-cloud-storage
