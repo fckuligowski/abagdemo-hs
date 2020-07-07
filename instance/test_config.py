@@ -3,7 +3,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 INIT_DATA_FILE = 'instance/config/init_data_test.json'
-APP_NAME = 'abagdemo-gcp-test'
+APP_NAME = 'abagdemo-hs-test'
 now = datetime.now()
 DATA_BUCKET_NAME = APP_NAME + '-' + now.strftime('%Y%m%d%H%M%S')
 DATA_FILE_NAME = APP_NAME + '.json'

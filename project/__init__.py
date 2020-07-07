@@ -3,6 +3,7 @@
 # any Blueprints that it needs.
 #
 from flask import Flask
+from .bags.helpers.middleware import setup_metrics
 import json
 import sys
 from google.cloud import storage
@@ -18,6 +19,7 @@ def create_app(config_filename=None):
     app.config.from_pyfile(config_filename)
     initialize_extensions(app)
     register_blueprints(app)
+    setup_metrics(app)
     return app
 
 def initialize_extensions(app):

@@ -1,9 +1,19 @@
 from . import bags_blueprint
-from flask import current_app, request
+from flask import current_app, request, Response
 import flask
+import prometheus_client
 import json
 from google.cloud import storage
 from google.cloud.storage import Blob
+
+@bags_blueprint.route('/metrics')
+def metrics():
+    """
+       This is the Prometheus metrics endpoint - to provide stats on this
+       running application.
+    """
+    content_type = str('text/plain; version=0.0.4; charset=utf-8')
+    return Response(prometheus_client.generate_latest(), mimetype=content_type)
 
 @bags_blueprint.route('/')
 @bags_blueprint.route('/index')
