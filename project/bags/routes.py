@@ -5,6 +5,7 @@ import prometheus_client
 import json
 from google.cloud import storage
 from google.cloud.storage import Blob
+import time # Used to introduce a delay for perf testing
 
 @bags_blueprint.route('/metrics')
 def metrics():
@@ -109,6 +110,9 @@ def get_data():
        the file as a dictionary.
        Create the file, with dummy data, if it don't exist.
     """
+    # Introduce a delay here.
+    time.sleep(1)
+    # Start of the actual function
     rtn = None
     storage_client = storage.Client()
     bucket_name = current_app.config.get('DATA_BUCKET_NAME')
