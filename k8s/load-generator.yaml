@@ -14,13 +14,13 @@ spec:
     - '-c'
     - |
       while true; do 
-        curl abagdemo-svc.prod:5000/status/001 
-        sleep 15
-        curl abagdemo-svc.prod:5000/history/001 
-        sleep 15
-        curl abagdemo-svc.prod:5000/status/002
-        sleep 15
-        curl abagdemo-svc.prod:5000/history/002
-        sleep 15
+        for x in 1 2 3 4 5; do
+            curl abagdemo-svc.prod:5000/history/001
+        done
+        sleep 5
+        for x in 1 2 3 4 5; do
+            curl abagdemo-svc.prod:5000/history/002
+        done
+        sleep 5
       done
   restartPolicy: OnFailure

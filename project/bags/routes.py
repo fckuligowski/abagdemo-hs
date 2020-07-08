@@ -111,7 +111,7 @@ def get_data():
        Create the file, with dummy data, if it don't exist.
     """
     # Introduce a delay here.
-    time.sleep(10)
+    time.sleep(1)
     # Start of the actual function
     rtn = None
     storage_client = storage.Client()
