@@ -6,7 +6,6 @@ import json
 from google.cloud import storage
 from google.cloud.storage import Blob
 import time # Used to introduce a delay for perf testing
-import os # Used only for getting Pod name
 
 @bags_blueprint.route('/metrics')
 def metrics():
@@ -20,8 +19,8 @@ def metrics():
 @bags_blueprint.route('/')
 @bags_blueprint.route('/index')
 def index():
-    return 'Welcome to the %s application. Version=%s. Pod=%s\n' % (
-        current_app.config.get('APP_NAME'), get_version(), get_pod_name())
+    return 'Welcome to the %s application. Version=%s\n' % (
+        current_app.config.get('APP_NAME'), get_version())
 
 def get_version():
     """
@@ -37,12 +36,6 @@ def get_version():
             rtn = instrs[-1]
     except Exception as e:
         pass
-    return rtn
-
-def get_pod_name():
-    rtn = ''
-    if os.environ.get('POD_NAME'):
-        rtn = os.environ.get('POD_NAME')
     return rtn
 
 @bags_blueprint.route('/scan', methods=['POST'])
@@ -118,7 +111,7 @@ def get_data():
        Create the file, with dummy data, if it don't exist.
     """
     # Introduce a delay here.
-    #time.sleep(10)
+    time.sleep(10)
     # Start of the actual function
     rtn = None
     storage_client = storage.Client()
