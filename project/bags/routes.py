@@ -6,6 +6,7 @@ import json
 from google.cloud import storage
 from google.cloud.storage import Blob
 import time # Used to introduce a delay for perf testing
+import random # Used to introduce a delay, too
 
 @bags_blueprint.route('/metrics')
 def metrics():
@@ -111,7 +112,7 @@ def get_data():
        Create the file, with dummy data, if it don't exist.
     """
     # Introduce a delay here.
-    time.sleep(10)
+    do_delay()
     # Start of the actual function
     rtn = None
     storage_client = storage.Client()
@@ -133,3 +134,22 @@ def get_data():
     data_str = blob.download_as_string()
     rtn = json.loads(data_str)
     return rtn, blob
+
+def do_delay():
+    """
+       Introduce a delay in the response so that we can show an
+       increase in response time to Prometheus and Harness.
+    """
+    # Get a random number between 0 and 100
+    rand = random.randint(0, 100)
+    # Express it as a percentage
+    rand = rand / 100
+    # Get percentage of our selected variance of 5 secs
+    pct = 5 * rand
+    # Subtract number from our max delay of 10 secs
+    max_delay = 0
+    delay = max_delay - pct
+    if delay < 0:
+        delay = 0
+    print('delay=%s' % delay)
+    time.sleep(delay)
