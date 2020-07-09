@@ -147,7 +147,7 @@ def do_delay():
     # Get percentage of our selected variance of 5 secs
     pct = 5 * rand
     # Subtract number from our max delay of 10 secs
-    max_delay = 10
+    max_delay = 5
     delay = max_delay - pct
     if delay < 0:
         delay = 0
