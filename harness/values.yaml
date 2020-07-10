@@ -6,7 +6,7 @@ replicas: 1
 # Don't put quotes around the values because it's too hard to parse those
 # out in the build script (using grep & sed).
 imageRepository: fckuligowski/abagdemo-hs
-imageTag: v1.2.15
+imageTag: v1.2.16
 
 image: ${artifact.metadata.image}
 dockercfg: ${artifact.source.dockerconfig}
@@ -17,7 +17,7 @@ namespace: ${infra.kubernetes.namespace}
 # Service Type allow you to specify what kind of service you want.
 # Possible values for ServiceType are:
 # ClusterIP | NodePort | LoadBalancer | ExternalName
-serviceType: LoadBalancer
+serviceType: NodePort
 
 # A Service can map an incoming port to any targetPort.
 # targetPort is where application is listening on inside the container.
