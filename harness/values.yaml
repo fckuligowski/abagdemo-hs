@@ -6,7 +6,7 @@ replicas: 1
 # Don't put quotes around the values because it's too hard to parse those
 # out in the build script (using grep & sed).
 imageRepository: fckuligowski/abagdemo-hs
-imageTag: v1.2.18
+imageTag: v1.2.19
 
 image: ${artifact.metadata.image}
 dockercfg: ${artifact.source.dockerconfig}
