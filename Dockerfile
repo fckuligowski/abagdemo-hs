@@ -1,9 +1,10 @@
 FROM python:3.8-alpine
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev
 EXPOSE 5000
 
 COPY requirements.txt /abagdemo/requirements.txt
 WORKDIR /abagdemo
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /abagdemo
 # Get the version of image from the k8s deployment and create

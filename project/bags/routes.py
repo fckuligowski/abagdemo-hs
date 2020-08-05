@@ -100,9 +100,11 @@ def save_bag_scan(scan):
     data_dict, blob = get_data()
     # Add record to end of data
     data_dict.append(scan)
-    print(json.dumps(data_dict, indent=4))
+    new_data_str = json.dumps(data_dict, indent=4)
+    print('NEW BAG SCAN DATA:')
+    print(new_data_str)
     # Save the data back to GCP storage
-    blob.upload_from_string(json.dumps(data_dict, indent=4))
+    blob.upload_from_string(new_data_str)
     return len(data_dict)
 
 def get_data():
@@ -117,6 +119,7 @@ def get_data():
     rtn = None
     storage_client = storage.Client()
     bucket_name = current_app.config.get('DATA_BUCKET_NAME')
+    print('bucket_name=%s' % bucket_name)
     try:
         bucket = storage_client.get_bucket(bucket_name)
     except Exception as e:
@@ -133,6 +136,8 @@ def get_data():
         blob.upload_from_string(json.dumps(init_data, indent=4))
     data_str = blob.download_as_string()
     rtn = json.loads(data_str)
+    print('GOT BAG DATA:')
+    print(json.dumps(rtn, indent=4))
     return rtn, blob
 
 def do_delay():
