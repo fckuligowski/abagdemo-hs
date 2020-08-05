@@ -83,8 +83,6 @@ def get_bag_data(bag_id):
         and then filter by the specified bag_id
     """
     data_dict, _ = get_data()
-    print('GOT BAG DATA:')
-    print(json.dumps(data_dict, indent=4))
     if bag_id is None:
         bag_id = '000'
     rtn = []
@@ -102,6 +100,7 @@ def save_bag_scan(scan):
     data_dict, blob = get_data()
     # Add record to end of data
     data_dict.append(scan)
+    print('NEW BAG SCAN DATA:')
     print(json.dumps(data_dict, indent=4))
     # Save the data back to GCP storage
     blob.upload_from_string(json.dumps(data_dict, indent=4))
@@ -136,6 +135,8 @@ def get_data():
         blob.upload_from_string(json.dumps(init_data, indent=4))
     data_str = blob.download_as_string()
     rtn = json.loads(data_str)
+    print('GOT BAG DATA:')
+    print(json.dumps(rtn, indent=4))
     return rtn, blob
 
 def do_delay():
