@@ -83,6 +83,8 @@ def get_bag_data(bag_id):
         and then filter by the specified bag_id
     """
     data_dict, _ = get_data()
+    print('GOT BAG DATA:')
+    print(json.dumps(data_dict, indent=4))
     if bag_id is None:
         bag_id = '000'
     rtn = []
@@ -117,6 +119,7 @@ def get_data():
     rtn = None
     storage_client = storage.Client()
     bucket_name = current_app.config.get('DATA_BUCKET_NAME')
+    print('bucket_name=%s' % bucket_name)
     try:
         bucket = storage_client.get_bucket(bucket_name)
     except Exception as e:
