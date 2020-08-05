@@ -100,10 +100,11 @@ def save_bag_scan(scan):
     data_dict, blob = get_data()
     # Add record to end of data
     data_dict.append(scan)
+    new_data_str = json.dumps(data_dict, indent=4)
     print('NEW BAG SCAN DATA:')
-    print(json.dumps(data_dict, indent=4))
+    print(new_data_str)
     # Save the data back to GCP storage
-    blob.upload_from_string(json.dumps(data_dict, indent=4))
+    blob.upload_from_string(new_data_str)
     return len(data_dict)
 
 def get_data():
